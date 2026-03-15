@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using ChatbotClient.Core;
+using ChatbotClient.Models;
 using ChatbotClient.Utils;
 using CommunityToolkit.Mvvm.Input;
 using Prism.Mvvm;
@@ -13,9 +16,21 @@ public class MainWindowViewModel : BindableBase
     private readonly RequestDispatcher requestDispatcher = new ();
     private string inputText;
     private string responseText;
+    private AiModelType currentModel;
 
     public MainWindowViewModel()
     {
+        AvailableModels = new ObservableCollection<AiModelType>()
+        {
+            AiModelType.GeminiFlashLite,
+            AiModelType.GeminiFlash,
+            AiModelType.GemmaFree,
+            AiModelType.LlamaFree,
+            AiModelType.ChatGPT4o,
+        };
+
+        CurrentModel = AvailableModels.First();
+
         DebugDummyData();
     }
 
@@ -25,13 +40,18 @@ public class MainWindowViewModel : BindableBase
 
     public string ResponseText { get => responseText; set => SetProperty(ref responseText, value); }
 
+    public ObservableCollection<AiModelType> AvailableModels { get; init; }
+
+    public AiModelType CurrentModel { get => currentModel; set => SetProperty(ref currentModel, value); }
+
     public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Console.WriteLine("コマンドが実行されました");
 
         try
         {
-            var result = await requestDispatcher.SendRequest(InputText);
+            var modelName = OpenRouterModels.GetModelId(CurrentModel);
+            var result = await requestDispatcher.SendRequest(InputText, modelName);
             ResponseText = string.IsNullOrWhiteSpace(result) ? "(空の応答)" : result;
         }
         catch (Exception e)

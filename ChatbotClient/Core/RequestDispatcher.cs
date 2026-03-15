@@ -8,7 +8,7 @@ namespace ChatbotClient.Core
 {
     public class RequestDispatcher
     {
-        public async Task<string> SendRequest(string message)
+        public async Task<string> SendRequest(string message, string modelName)
         {
             // 環境変数から API キーを取得
             var apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
@@ -25,7 +25,7 @@ namespace ChatbotClient.Core
             };
 
             // 取得した apiKey を渡す
-            var client = new ChatClient("google/gemini-2.0-flash-lite-001", new ApiKeyCredential(apiKey), options);
+            var client = new ChatClient(modelName, new ApiKeyCredential(apiKey), options);
 
             ChatCompletion completion = await client.CompleteChatAsync(message);
             var text = completion?.Content?.Count > 0 ? completion.Content[0].Text : string.Empty;

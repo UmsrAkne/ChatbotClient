@@ -21,6 +21,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <Border Grid.Row="0">
+            <ComboBox
+                Width="200"
+                HorizontalAlignment="Right"
+                ItemsSource="{Binding AvailableModels}"
+                SelectedItem="{Binding CurrentModel}" />
+        </Border>
+
         <TextBox Grid.Row="1" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}" />
 
         <TextBlock
