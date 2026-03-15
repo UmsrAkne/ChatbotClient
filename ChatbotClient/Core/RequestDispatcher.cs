@@ -28,7 +28,19 @@ namespace ChatbotClient.Core
             var client = new ChatClient(modelName, new ApiKeyCredential(apiKey), options);
 
             ChatCompletion completion = await client.CompleteChatAsync(message);
+
+            // トークン使用量の取得
+            if (completion.Usage != null)
+            {
+                var inputTokens = completion.Usage.InputTokenCount;   // 投げた量
+                var outputTokens = completion.Usage.OutputTokenCount; // 返ってきた量
+                var totalTokens = completion.Usage.TotalTokenCount;   // 合計
+
+                Console.WriteLine($"[Usage] Input: {inputTokens}, Output: {outputTokens}, Total: {totalTokens}");
+            }
+
             var text = completion?.Content?.Count > 0 ? completion.Content[0].Text : string.Empty;
+
             // ログとしても出力
             Console.WriteLine(text);
             return text;
