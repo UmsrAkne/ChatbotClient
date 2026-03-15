@@ -12,6 +12,7 @@ public class MainWindowViewModel : BindableBase
     private readonly AppVersionInfo appVersionInfo = new ();
     private readonly RequestDispatcher requestDispatcher = new ();
     private string inputText;
+    private string responseText;
 
     public MainWindowViewModel()
     {
@@ -22,17 +23,21 @@ public class MainWindowViewModel : BindableBase
 
     public string InputText { get => inputText; set => SetProperty(ref inputText, value); }
 
+    public string ResponseText { get => responseText; set => SetProperty(ref responseText, value); }
+
     public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Console.WriteLine("コマンドが実行されました");
 
         try
         {
-            await requestDispatcher.SendRequest(InputText);
+            var result = await requestDispatcher.SendRequest(InputText);
+            ResponseText = string.IsNullOrWhiteSpace(result) ? "(空の応答)" : result;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
+            ResponseText = $"エラー: {e.Message}";
         }
     });
 
@@ -40,5 +45,6 @@ public class MainWindowViewModel : BindableBase
     private void DebugDummyData()
     {
         InputText = "Hello";
+        ResponseText = "ここに応答が表示されます";
     }
 }
