@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ClientModel;
 using System.Threading.Tasks;
+using ChatbotClient.Models;
 using OpenAI;
 using OpenAI.Chat;
 
@@ -8,7 +9,7 @@ namespace ChatbotClient.Core
 {
     public class RequestDispatcher
     {
-        public async Task<string> SendRequest(string message, string modelName)
+        public async Task<string> SendRequest(TalkRequest req)
         {
             // 環境変数から API キーを取得
             var apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
@@ -25,9 +26,9 @@ namespace ChatbotClient.Core
             };
 
             // 取得した apiKey を渡す
-            var client = new ChatClient(modelName, new ApiKeyCredential(apiKey), options);
+            var client = new ChatClient(req.ModelName, new ApiKeyCredential(apiKey), options);
 
-            ChatCompletion completion = await client.CompleteChatAsync(message);
+            ChatCompletion completion = await client.CompleteChatAsync(req.Message);
 
             // トークン使用量の取得
             if (completion.Usage != null)

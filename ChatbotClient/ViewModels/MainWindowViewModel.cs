@@ -62,7 +62,8 @@ public class MainWindowViewModel : BindableBase
         try
         {
             var modelName = OpenRouterModels.GetModelId(CurrentModel);
-            var result = await requestDispatcher.SendRequest(InputText, modelName);
+            var request = new TalkRequest { Message = InputText, ModelName = modelName, };
+            var result = await requestDispatcher.SendRequest(request);
             ResponseText = string.IsNullOrWhiteSpace(result) ? "(空の応答)" : result;
         }
         catch (Exception e)
