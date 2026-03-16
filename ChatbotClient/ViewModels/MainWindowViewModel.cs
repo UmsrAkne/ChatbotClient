@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using ChatbotClient.Core;
+using ChatbotClient.Data;
 using ChatbotClient.Models;
 using ChatbotClient.Utils;
 using CommunityToolkit.Mvvm.Input;
@@ -14,11 +15,12 @@ public class MainWindowViewModel : BindableBase
 {
     private readonly AppVersionInfo appVersionInfo = new ();
     private readonly RequestDispatcher requestDispatcher = new ();
+    private readonly ITalkRepository talkRepository;
     private string inputText;
     private string responseText;
     private AiModelType currentModel;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ITalkRepository talkRepository)
     {
         AvailableModels = new ObservableCollection<AiModelType>()
         {
@@ -30,7 +32,16 @@ public class MainWindowViewModel : BindableBase
         };
 
         CurrentModel = AvailableModels.First();
+        this.talkRepository = talkRepository;
 
+        DebugDummyData();
+    }
+
+    /// <summary>
+    /// Used for XAML design-time only.
+    /// </summary>
+    public MainWindowViewModel()
+    {
         DebugDummyData();
     }
 

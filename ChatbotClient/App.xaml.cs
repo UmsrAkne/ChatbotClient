@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using ChatbotClient.Data;
 using ChatbotClient.Views;
 using Prism.Ioc;
 
@@ -16,5 +17,7 @@ public partial class App
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        containerRegistry.Register<MyDbContext>();
+        containerRegistry.Register<ITalkRepository, TalkRepository>();
     }
 }
