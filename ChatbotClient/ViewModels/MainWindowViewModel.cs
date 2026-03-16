@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
@@ -34,6 +35,7 @@ public class MainWindowViewModel : BindableBase
         CurrentModel = AvailableModels.First();
         this.talkRepository = talkRepository;
 
+        _ = InitializeAsync();
         DebugDummyData();
     }
 
@@ -72,6 +74,23 @@ public class MainWindowViewModel : BindableBase
             ResponseText = $"エラー: {e.Message}";
         }
     });
+
+    private async Task InitializeAsync()
+    {
+        try
+        {
+            await talkRepository.AddSessionAsync(new TalkSession
+            {
+                Title = $"Session {DateTime.Now.ToShortTimeString()}",
+            });
+            Console.WriteLine("Session added successfully.");
+        }
+        catch (Exception ex)
+        {
+            // ここでようやくエラーが表面化する！
+            Console.WriteLine($"DB Error: {ex.Message}");
+        }
+    }
 
     [Conditional("DEBUG")]
     private void DebugDummyData()
