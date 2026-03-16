@@ -1,4 +1,6 @@
-﻿using ChatbotClient.Models;
+﻿using System;
+using System.IO;
+using ChatbotClient.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatbotClient.Data
@@ -13,7 +15,9 @@ namespace ChatbotClient.Data
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlite("Data Source=talk_history.db");
+                var baseDir = AppContext.BaseDirectory;
+                var dbPath = Path.Combine(baseDir, "talk_history.db");
+                optionsBuilder.UseSqlite($"Data Source={dbPath}");
             }
         }
 
