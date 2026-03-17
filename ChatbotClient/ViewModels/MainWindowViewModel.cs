@@ -139,6 +139,12 @@ public class MainWindowViewModel : BindableBase
             var ss = await talkRepository.GetSessionsAsync();
             Sessions.AddRange(ss);
             CurrentSession = Sessions.FirstOrDefault();
+
+            if (CurrentSession != null)
+            {
+                var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+                Talks.AddRange(ts);
+            }
         }
         catch (Exception ex)
         {

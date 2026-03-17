@@ -32,7 +32,8 @@
             Grid.RowSpan="4"
             Grid.Column="0"
             Width="200"
-            ItemsSource="{Binding Sessions}">
+            ItemsSource="{Binding Sessions}"
+            SelectedItem="{Binding CurrentSession}">
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:TalkSession}">
                     <StackPanel Orientation="Horizontal">
@@ -64,7 +65,10 @@
                         </Grid.ColumnDefinitions>
 
                         <Border Padding="10" CornerRadius="10">
-                            <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                            <StackPanel>
+                                <TextBlock Text="{Binding Role, StringFormat={}{0}:}" />
+                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
+                            </StackPanel>
                         </Border>
                     </Grid>
                 </DataTemplate>
