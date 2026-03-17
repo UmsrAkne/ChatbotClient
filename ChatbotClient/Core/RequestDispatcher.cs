@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ClientModel;
+using System.Linq;
 using System.Threading.Tasks;
 using ChatbotClient.Models;
 using OpenAI;
@@ -40,7 +41,7 @@ namespace ChatbotClient.Core
                 Console.WriteLine($"[Usage] Input: {inputTokens}, Output: {outputTokens}, Total: {totalTokens}");
             }
 
-            var text = completion?.Content?.Count > 0 ? completion.Content[0].Text : string.Empty;
+            var text = completion.Content?.FirstOrDefault()?.Text ?? string.Empty;
 
             // ログとしても出力
             Console.WriteLine(text);
