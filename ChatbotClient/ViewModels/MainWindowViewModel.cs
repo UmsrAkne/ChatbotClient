@@ -20,6 +20,7 @@ public class MainWindowViewModel : BindableBase
     private string inputText;
     private string responseText;
     private AiModelType currentModel;
+    private TalkSession currentSession;
 
     public MainWindowViewModel(ITalkRepository talkRepository)
     {
@@ -57,6 +58,10 @@ public class MainWindowViewModel : BindableBase
 
     public AiModelType CurrentModel { get => currentModel; set => SetProperty(ref currentModel, value); }
 
+    public ObservableCollection<TalkSession> Sessions { get; set; } = new ();
+
+    public TalkSession CurrentSession { get => currentSession; set => SetProperty(ref currentSession, value); }
+
     public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Console.WriteLine("コマンドが実行されました");
@@ -83,7 +88,12 @@ public class MainWindowViewModel : BindableBase
             {
                 Title = $"Session {DateTime.Now.ToShortTimeString()}",
             });
+
             Console.WriteLine("Session added successfully.");
+
+            var ss = await talkRepository.GetSessionsAsync();
+            Sessions.AddRange(ss);
+            CurrentSession = Sessions.FirstOrDefault();
         }
         catch (Exception ex)
         {
