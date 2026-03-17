@@ -64,6 +64,18 @@ public class MainWindowViewModel : BindableBase
 
     public ObservableCollection<TalkEntry> Talks { get; set; } = new ();
 
+    public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
+    {
+        if (CurrentSession == null)
+        {
+            return;
+        }
+
+        Talks.Clear();
+        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+        Talks.AddRange(ts);
+    });
+
     public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Console.WriteLine("コマンドが実行されました");
