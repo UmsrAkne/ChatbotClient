@@ -28,8 +28,10 @@ namespace ChatbotClient.Core
 
             // 取得した apiKey を渡す
             var client = new ChatClient(req.ModelName, new ApiKeyCredential(apiKey), options);
+            req.SystemPrompt = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。";
 
-            ChatCompletion completion = await client.CompleteChatAsync(req.Message);
+            // 引数にリストを渡す
+            ChatCompletion completion = await client.CompleteChatAsync(req.GeneratedMessages());
 
             // トークン使用量の取得
             if (completion.Usage != null)
