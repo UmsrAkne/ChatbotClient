@@ -29,8 +29,14 @@ namespace ChatbotClient.Core
             // 取得した apiKey を渡す
             var client = new ChatClient(req.ModelName, new ApiKeyCredential(apiKey), options);
 
+            // まかり間違って異常に大きな出力を引いた時のために、リミットをつける。
+            var opt = new ChatCompletionOptions
+            {
+                MaxOutputTokenCount = 2000, // 日本語では 1文字あたり、 [1.2 - 1.3] トークン程度。
+            };
+
             // 引数にリストを渡す（SystemPrompt や History は呼び出し側で設定）
-            ChatCompletion completion = await client.CompleteChatAsync(req.GeneratedMessages());
+            ChatCompletion completion = await client.CompleteChatAsync(req.GeneratedMessages(), opt);
 
             // トークン使用量の取得
             if (completion.Usage != null)
