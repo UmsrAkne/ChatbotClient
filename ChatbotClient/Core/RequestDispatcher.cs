@@ -29,7 +29,8 @@ namespace ChatbotClient.Core
             // 取得した apiKey を渡す
             var client = new ChatClient(req.ModelName, new ApiKeyCredential(apiKey), options);
 
-            ChatCompletion completion = await client.CompleteChatAsync(req.Message);
+            // 引数にリストを渡す（SystemPrompt や History は呼び出し側で設定）
+            ChatCompletion completion = await client.CompleteChatAsync(req.GeneratedMessages());
 
             // トークン使用量の取得
             if (completion.Usage != null)

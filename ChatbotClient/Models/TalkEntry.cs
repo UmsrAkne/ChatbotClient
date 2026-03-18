@@ -10,7 +10,9 @@ namespace ChatbotClient.Models
 
         public string Role { get; set; } = string.Empty; // 発言者種別
 
-        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public DateTime Timestamp { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(
+            DateTime.UtcNow,
+            TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
 
         // 外部キー
         public int TalkSessionId { get; set; }
