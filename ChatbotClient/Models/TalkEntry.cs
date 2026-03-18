@@ -19,5 +19,7 @@ namespace ChatbotClient.Models
 
         // ナビゲーションプロパティ（多対1）
         public TalkSession TalkSession { get; set; }
+
+        public string GenerationId { get; set; }
     }
 }

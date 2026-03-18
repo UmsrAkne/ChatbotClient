@@ -10,7 +10,7 @@ namespace ChatbotClient.Core
 {
     public class RequestDispatcher
     {
-        public async Task<string> SendRequest(TalkRequest req)
+        public async Task<TalkEntry> SendRequest(TalkRequest req)
         {
             // 環境変数から API キーを取得
             var apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
@@ -46,7 +46,14 @@ namespace ChatbotClient.Core
 
             // ログとしても出力
             Console.WriteLine(text);
-            return text;
+            var entry = new TalkEntry()
+            {
+                GenerationId = completion.Id,
+                Content = text,
+                Role = "assistant",
+            };
+
+            return entry;
         }
     }
 }

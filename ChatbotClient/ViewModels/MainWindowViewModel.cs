@@ -124,7 +124,7 @@ public class MainWindowViewModel : BindableBase
         }
     });
 
-    private async Task RegisterChat(string chatMessage)
+    private async Task RegisterChat(TalkEntry talkEntry)
     {
         if (CurrentSession == null)
         {
@@ -133,14 +133,8 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        var entry = new TalkEntry
-        {
-            Content = string.IsNullOrWhiteSpace(chatMessage) ? "Empty message" : chatMessage,
-            Role = "assistant",
-        };
-
-        await talkRepository.AddEntryAsync(CurrentSession.Id, entry);
-        Talks.Add(entry);
+        await talkRepository.AddEntryAsync(CurrentSession.Id, talkEntry);
+        Talks.Add(talkEntry);
     }
 
     private async Task InitializeAsync()
