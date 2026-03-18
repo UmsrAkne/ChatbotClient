@@ -73,7 +73,7 @@ public class MainWindowViewModel : BindableBase
 
         Talks.Clear();
         var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
-        Talks.AddRange(ts);
+        Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
     public AsyncRelayCommand SendRequestCommand => new (async () =>
@@ -155,7 +155,7 @@ public class MainWindowViewModel : BindableBase
             Console.WriteLine("Session added successfully.");
 
             var ss = await talkRepository.GetSessionsAsync();
-            Sessions.AddRange(ss);
+            Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
             CurrentSession = Sessions.FirstOrDefault();
 
             if (CurrentSession != null)
