@@ -98,7 +98,13 @@ public class MainWindowViewModel : BindableBase
         try
         {
             var modelName = OpenRouterModels.GetModelId(CurrentModel);
-            var request = new TalkRequest { Message = originalText, ModelName = modelName };
+            var request = new TalkRequest
+            {
+                Message = originalText,
+                ModelName = modelName,
+                SystemPrompt = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
+                History = Talks.ToList(),
+            };
 
             // 3. 通信開始
             var result = await requestDispatcher.SendRequest(request);
