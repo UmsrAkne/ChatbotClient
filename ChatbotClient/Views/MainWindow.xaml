@@ -29,9 +29,15 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox
+        <Button
             Grid.Row="0"
-            Grid.RowSpan="4"
+            Grid.Column="0"
+            Command="{Binding AddSessionCommand}"
+            Content="New Chat Session" />
+
+        <ListBox
+            Grid.Row="1"
+            Grid.RowSpan="3"
             Grid.Column="0"
             Width="200"
             ItemsSource="{Binding Sessions}"

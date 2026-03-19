@@ -124,6 +124,30 @@ public class MainWindowViewModel : BindableBase
         }
     });
 
+    public AsyncRelayCommand AddSessionCommand => new (async () =>
+    {
+        try
+        {
+            await talkRepository.AddSessionAsync(new TalkSession
+            {
+                Title = $"Session {DateTime.Now.ToShortTimeString()}",
+            });
+
+            Console.WriteLine("Session added successfully.");
+
+            var ss = await talkRepository.GetSessionsAsync();
+            Sessions.Clear();
+            Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
+
+            Console.WriteLine("Reload Sessions");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    });
+
     private async Task RegisterChat(TalkEntry talkEntry)
     {
         if (CurrentSession == null)
@@ -141,16 +165,10 @@ public class MainWindowViewModel : BindableBase
     {
         try
         {
-            await talkRepository.AddSessionAsync(new TalkSession
-            {
-                Title = $"Session {DateTime.Now.ToShortTimeString()}",
-            });
-
-            Console.WriteLine("Session added successfully.");
-
             var ss = await talkRepository.GetSessionsAsync();
             Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
-            CurrentSession = Sessions.FirstOrDefault();
+
+            CurrentSession = Sessions[1];
 
             if (CurrentSession != null)
             {
