@@ -5,12 +5,13 @@
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mdXaml="https://github.com/whistyun/MdXaml"
     xmlns:models="clr-namespace:ChatbotClient.Models"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:ChatbotClient.ViewModels"
     Title="{Binding Title}"
     Width="525"
-    Height="350"
+    Height="600"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
@@ -28,9 +29,15 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ListBox
+        <Button
             Grid.Row="0"
-            Grid.RowSpan="4"
+            Grid.Column="0"
+            Command="{Binding AddSessionCommand}"
+            Content="New Chat Session" />
+
+        <ListBox
+            Grid.Row="1"
+            Grid.RowSpan="3"
             Grid.Column="0"
             Width="200"
             ItemsSource="{Binding Sessions}"
@@ -57,29 +64,60 @@
                 SelectedItem="{Binding CurrentModel}" />
         </Border>
 
-        <ListBox
-            Grid.Row="1"
-            Grid.Column="1"
-            ItemsSource="{Binding Talks}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="1" Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Talks}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Border Padding="10" CornerRadius="10">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Role, StringFormat={}{0}:}" />
-                                <TextBlock Text="{Binding Content}" TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                            <Border Padding="10" CornerRadius="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
+                                    <mdXaml:MarkdownScrollViewer
+                                        Grid.Row="1"
+                                        FontFamily="Yu Gothic UI"
+                                        FontSize="16"
+                                        Foreground="DimGray"
+                                        Markdown="{Binding Content}"
+                                        PreviewMouseWheel="Markdown_PreviewMouseWheel"
+                                        VerticalScrollBarVisibility="Disabled">
+                                        <mdXaml:MarkdownScrollViewer.MarkdownStyle>
+                                            <Style TargetType="FlowDocument">
+                                                <Style.Resources>
+
+                                                    <Style TargetType="{x:Type Run}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="Tag" Value="CodeSpan">
+                                                                <Setter Property="Background" Value="LightGray" />
+                                                                <Setter Property="FontFamily" Value="Yu Gothic UI" />
+                                                                <Setter Property="BaselineAlignment" Value="Center" />
+                                                                <Setter Property="FontSize" Value="16" />
+                                                                <Setter Property="Foreground" Value="Black" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+
+                                                </Style.Resources>
+                                            </Style>
+                                        </mdXaml:MarkdownScrollViewer.MarkdownStyle>
+                                    </mdXaml:MarkdownScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <TextBox
             Grid.Row="2"

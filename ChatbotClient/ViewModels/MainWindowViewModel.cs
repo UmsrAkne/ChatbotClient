@@ -124,7 +124,27 @@ public class MainWindowViewModel : BindableBase
         }
     });
 
-    private async Task RegisterChat(string chatMessage)
+    public AsyncRelayCommand AddSessionCommand => new (async () =>
+    {
+        try
+        {
+            var newSession = await talkRepository.AddSessionAsync(new TalkSession
+            {
+                Title = $"Session {DateTime.Now.ToShortTimeString()}",
+            });
+
+            Console.WriteLine("Session added successfully.");
+
+            await ReloadSessionsAsync(selectionId: newSession.Id);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    });
+
+    private async Task RegisterChat(TalkEntry talkEntry)
     {
         if (CurrentSession == null)
         {
@@ -133,30 +153,15 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        var entry = new TalkEntry
-        {
-            Content = string.IsNullOrWhiteSpace(chatMessage) ? "Empty message" : chatMessage,
-            Role = "assistant",
-        };
-
-        await talkRepository.AddEntryAsync(CurrentSession.Id, entry);
-        Talks.Add(entry);
+        await talkRepository.AddEntryAsync(CurrentSession.Id, talkEntry);
+        Talks.Add(talkEntry);
     }
 
     private async Task InitializeAsync()
     {
         try
         {
-            await talkRepository.AddSessionAsync(new TalkSession
-            {
-                Title = $"Session {DateTime.Now.ToShortTimeString()}",
-            });
-
-            Console.WriteLine("Session added successfully.");
-
-            var ss = await talkRepository.GetSessionsAsync();
-            Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
-            CurrentSession = Sessions.FirstOrDefault();
+            await ReloadSessionsAsync();
 
             if (CurrentSession != null)
             {
@@ -168,6 +173,23 @@ public class MainWindowViewModel : BindableBase
         {
             // ここでようやくエラーが表面化する！
             Console.WriteLine($"DB Error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// セッションのリストをリロードします。引数を入力した場合、該当IDのセッションを CurrentSession に代入します。
+    /// </summary>
+    /// <param name="selectionId">リロード直後に選択するセッションIDを指定します。</param>
+    private async Task ReloadSessionsAsync(int selectionId = -1)
+    {
+        var ss = await talkRepository.GetSessionsAsync();
+        Sessions.Clear();
+        Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
+        Console.WriteLine("Reload Sessions");
+
+        if (selectionId >= 0)
+        {
+            CurrentSession = Sessions.FirstOrDefault(s => s.Id == selectionId);
         }
     }
 
