@@ -128,18 +128,14 @@ public class MainWindowViewModel : BindableBase
     {
         try
         {
-            await talkRepository.AddSessionAsync(new TalkSession
+            var newSession = await talkRepository.AddSessionAsync(new TalkSession
             {
                 Title = $"Session {DateTime.Now.ToShortTimeString()}",
             });
 
             Console.WriteLine("Session added successfully.");
 
-            var ss = await talkRepository.GetSessionsAsync();
-            Sessions.Clear();
-            Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
-
-            Console.WriteLine("Reload Sessions");
+            await ReloadSessionsAsync(selectionId: newSession.Id);
         }
         catch (Exception e)
         {
@@ -165,10 +161,7 @@ public class MainWindowViewModel : BindableBase
     {
         try
         {
-            var ss = await talkRepository.GetSessionsAsync();
-            Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
-
-            CurrentSession = Sessions[1];
+            await ReloadSessionsAsync();
 
             if (CurrentSession != null)
             {
@@ -180,6 +173,23 @@ public class MainWindowViewModel : BindableBase
         {
             // ここでようやくエラーが表面化する！
             Console.WriteLine($"DB Error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// セッションのリストをリロードします。引数を入力した場合、該当IDのセッションを CurrentSession に代入します。
+    /// </summary>
+    /// <param name="selectionId">リロード直後に選択するセッションIDを指定します。</param>
+    private async Task ReloadSessionsAsync(int selectionId = -1)
+    {
+        var ss = await talkRepository.GetSessionsAsync();
+        Sessions.Clear();
+        Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
+        Console.WriteLine("Reload Sessions");
+
+        if (selectionId >= 0)
+        {
+            CurrentSession = Sessions.FirstOrDefault(s => s.Id == selectionId);
         }
     }
 
