@@ -72,13 +72,20 @@
                         </Grid.ColumnDefinitions>
 
                         <Border Padding="10" CornerRadius="10">
-                            <StackPanel>
-                                <TextBlock Text="{Binding Role, StringFormat={}{0}:}" />
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
                                 <mdXaml:MarkdownScrollViewer
+                                    Grid.Row="1"
                                     FontFamily="Yu Gothic UI"
                                     FontSize="16"
                                     Foreground="DimGray"
-                                    Markdown="{Binding Content}">
+                                    Markdown="{Binding Content}"
+                                    VerticalScrollBarVisibility="Disabled">
                                     <mdXaml:MarkdownScrollViewer.MarkdownStyle>
                                         <Style TargetType="FlowDocument">
                                             <Style.Resources>
@@ -99,7 +106,7 @@
                                         </Style>
                                     </mdXaml:MarkdownScrollViewer.MarkdownStyle>
                                 </mdXaml:MarkdownScrollViewer>
-                            </StackPanel>
+                            </Grid>
                         </Border>
                     </Grid>
                 </DataTemplate>
