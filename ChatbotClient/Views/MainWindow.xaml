@@ -58,60 +58,60 @@
                 SelectedItem="{Binding CurrentModel}" />
         </Border>
 
-        <ListBox
-            Grid.Row="1"
-            Grid.Column="1"
-            ItemsSource="{Binding Talks}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                        </Grid.ColumnDefinitions>
+        <ScrollViewer Grid.Row="1" Grid.Column="1">
+            <ItemsControl ItemsSource="{Binding Talks}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
 
-                        <Border Padding="10" CornerRadius="10">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
+                            <Border Padding="10" CornerRadius="10">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition />
+                                    </Grid.RowDefinitions>
 
-                                <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
-                                <mdXaml:MarkdownScrollViewer
-                                    Grid.Row="1"
-                                    FontFamily="Yu Gothic UI"
-                                    FontSize="16"
-                                    Foreground="DimGray"
-                                    Markdown="{Binding Content}"
-                                    VerticalScrollBarVisibility="Disabled">
-                                    <mdXaml:MarkdownScrollViewer.MarkdownStyle>
-                                        <Style TargetType="FlowDocument">
-                                            <Style.Resources>
+                                    <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
+                                    <mdXaml:MarkdownScrollViewer
+                                        Grid.Row="1"
+                                        FontFamily="Yu Gothic UI"
+                                        FontSize="16"
+                                        Foreground="DimGray"
+                                        Markdown="{Binding Content}"
+                                        PreviewMouseWheel="Markdown_PreviewMouseWheel"
+                                        VerticalScrollBarVisibility="Disabled">
+                                        <mdXaml:MarkdownScrollViewer.MarkdownStyle>
+                                            <Style TargetType="FlowDocument">
+                                                <Style.Resources>
 
-                                                <Style TargetType="{x:Type Run}">
-                                                    <Style.Triggers>
-                                                        <Trigger Property="Tag" Value="CodeSpan">
-                                                            <Setter Property="Background" Value="LightGray" />
-                                                            <Setter Property="FontFamily" Value="Yu Gothic UI" />
-                                                            <Setter Property="BaselineAlignment" Value="Center" />
-                                                            <Setter Property="FontSize" Value="16" />
-                                                            <Setter Property="Foreground" Value="Black" />
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
+                                                    <Style TargetType="{x:Type Run}">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="Tag" Value="CodeSpan">
+                                                                <Setter Property="Background" Value="LightGray" />
+                                                                <Setter Property="FontFamily" Value="Yu Gothic UI" />
+                                                                <Setter Property="BaselineAlignment" Value="Center" />
+                                                                <Setter Property="FontSize" Value="16" />
+                                                                <Setter Property="Foreground" Value="Black" />
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
 
-                                            </Style.Resources>
-                                        </Style>
-                                    </mdXaml:MarkdownScrollViewer.MarkdownStyle>
-                                </mdXaml:MarkdownScrollViewer>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+                                                </Style.Resources>
+                                            </Style>
+                                        </mdXaml:MarkdownScrollViewer.MarkdownStyle>
+                                    </mdXaml:MarkdownScrollViewer>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
 
         <TextBox
             Grid.Row="2"
