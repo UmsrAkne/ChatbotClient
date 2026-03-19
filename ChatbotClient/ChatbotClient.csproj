@@ -9,6 +9,7 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+        <PackageReference Include="MdXaml" Version="2.0.0-pre202603081301" />
         <PackageReference Include="OpenAI" Version="2.9.1" />
         <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
