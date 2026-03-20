@@ -21,6 +21,7 @@ public class MainWindowViewModel : BindableBase
     private string responseText;
     private AiModelType currentModel;
     private TalkSession currentSession;
+    private int messageLimit = 10;
 
     public MainWindowViewModel(ITalkRepository talkRepository)
     {
@@ -104,6 +105,7 @@ public class MainWindowViewModel : BindableBase
                 ModelName = modelName,
                 SystemPrompt = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
                 History = Talks.ToList(),
+                MessageLimit = MessageLimit,
             };
 
             // 3. 通信開始
@@ -143,6 +145,8 @@ public class MainWindowViewModel : BindableBase
             throw;
         }
     });
+
+    public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
 
     private async Task RegisterChat(TalkEntry talkEntry)
     {
