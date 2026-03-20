@@ -20,6 +20,10 @@ namespace ChatbotClient.Models
         // ナビゲーションプロパティ（多対1）
         public TalkSession TalkSession { get; set; }
 
+        public AiModelType AiModelType { get; set; }
+
+        public int SystemPromptId { get; set; }
+
         public string GenerationId { get; set; }
     }
 }
