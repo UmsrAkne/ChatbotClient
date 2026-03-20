@@ -119,11 +119,28 @@
             </ItemsControl>
         </ScrollViewer>
 
-        <TextBox
-            Grid.Row="2"
-            Grid.Column="1"
-            Height="100"
-            Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}" />
+        <Border Grid.Row="2" Grid.Column="1">
+
+            <StackPanel>
+                <TextBox Height="100" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}" />
+                <DockPanel>
+                    <TextBlock Text="Context Length: " />
+                    <TextBlock
+                        Width="30"
+                        FontWeight="Bold"
+                        Text="{Binding MessageLimit}"
+                        TextAlignment="Right" />
+
+                    <Slider
+                        Margin="10,0"
+                        IsSnapToTickEnabled="True"
+                        Maximum="50"
+                        Minimum="0"
+                        TickFrequency="1"
+                        Value="{Binding MessageLimit}" />
+                </DockPanel>
+            </StackPanel>
+        </Border>
 
         <Border
             Grid.Row="3"

@@ -11,12 +11,15 @@ namespace ChatbotClient.Data
 
         public DbSet<TalkEntry> TalkEntries { get; set; } = null!;
 
+        public DbSet<SystemPromptEntry> SystemPrompts { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
                 var baseDir = AppContext.BaseDirectory;
                 var dbPath = Path.Combine(baseDir, "talk_history.db");
+                Console.WriteLine($"DB Path: {dbPath}");
                 optionsBuilder.UseSqlite($"Data Source={dbPath}");
             }
         }

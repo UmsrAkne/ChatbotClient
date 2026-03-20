@@ -14,11 +14,15 @@ namespace ChatbotClient.Models
 
         public string SystemPrompt { get; set; } = string.Empty;
 
+        /// <summary>
+        /// リクエストに含める履歴の件数です。ただし、システムメッセージは件数に含まれません。
+        /// </summary>
+        public int MessageLimit { get; set; } = 10;
+
         // 過去履歴（現在のセッション内の発言一覧）
         public IReadOnlyList<TalkEntry> History { get; set; } = new List<TalkEntry>();
 
-        // 直近履歴の上限はデフォルト10件（systemはカウントしない）
-        public List<ChatMessage> GeneratedMessages(int maxTurns = 10)
+        public List<ChatMessage> GeneratedMessages()
         {
             var result = new List<ChatMessage>();
 
@@ -33,23 +37,23 @@ namespace ChatbotClient.Models
                 .OrderBy(h => h.Timestamp)
                 .ToList();
 
-            if (maxTurns > 0)
-            {
-                var nonSystemHistory = ordered
-                    .Where(h => !string.Equals(h.Role, "system", StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+            var nonSystemHistory = ordered
+                .Where(h => !string.Equals(h.Role, "system", StringComparison.OrdinalIgnoreCase))
+                .ToList();
 
-                if (nonSystemHistory.Count > maxTurns)
+            if (nonSystemHistory.Count > MessageLimit)
+            {
+                // 残す先頭のエントリ（非system基準）
+                var keepFirst = nonSystemHistory[nonSystemHistory.Count - MessageLimit];
+                var startIndex = ordered.IndexOf(keepFirst);
+                if (startIndex > 0)
                 {
-                    // 残す先頭のエントリ（非system基準）
-                    var keepFirst = nonSystemHistory[nonSystemHistory.Count - maxTurns];
-                    var startIndex = ordered.IndexOf(keepFirst);
-                    if (startIndex > 0)
-                    {
-                        ordered = ordered.Skip(startIndex).ToList();
-                    }
+                    ordered = ordered.Skip(startIndex).ToList();
                 }
             }
+
+            Console.WriteLine($"Context length: {MessageLimit}");
+            Console.WriteLine($"History: {ordered.Count} entries");
 
             // 過去の TalkEntry → ChatMessage（role 変換）
             foreach (var h in ordered)
