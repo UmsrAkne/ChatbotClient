@@ -1,8 +1,15 @@
-﻿<prism:PrismApplication x:Class="ChatbotClient.App"
-                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                        xmlns:prism="http://prismlibrary.com/">
+﻿<prism:PrismApplication
+    x:Class="ChatbotClient.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime">
     <Application.Resources>
+        <SolidColorBrush x:Key="DarkBackgroundBrush" Color="#333340" />
+        <SolidColorBrush x:Key="MiddleBackgroundBrush" Color="#444455" />
 
+        <SolidColorBrush x:Key="CommonForegroundBrush" Color="#DDDDDD" />
+
+        <system:Double x:Key="CommonFontSize">15</system:Double>
     </Application.Resources>
 </prism:PrismApplication>
