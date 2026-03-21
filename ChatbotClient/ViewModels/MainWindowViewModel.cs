@@ -153,6 +153,11 @@ public class MainWindowViewModel : BindableBase
         }
     });
 
+    public RelayCommand AddDummyTalkCommand => new (() =>
+    {
+        AddDummyTalk();
+    });
+
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
 
     private async Task RegisterChat(TalkEntry talkEntry)
@@ -209,5 +214,18 @@ public class MainWindowViewModel : BindableBase
     {
         InputText = "Hello";
         ResponseText = "ここに応答が表示されます";
+    }
+
+    [Conditional("DEBUG")]
+    private void AddDummyTalk()
+    {
+        var dummyEntry = new TalkEntry
+        {
+            Content = $"これはデバッグ用のダミーメッセージです。時刻: {DateTime.Now:HH:mm:ss}\n長い文章のテストも兼ねています。あああああああああああああああああああああああ。",
+            Role = (Talks.Count % 2 == 0) ? "User" : "Assistant", // 交互にロールを変える
+            Timestamp = DateTime.Now,
+        };
+
+        Talks.Add(dummyEntry);
     }
 }
