@@ -157,7 +157,14 @@
         <Border Grid.Row="2" Grid.Column="1">
 
             <StackPanel>
-                <TextBox Height="100" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}" />
+                <TextBox Height="100" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
+                    <TextBox.InputBindings>
+                        <KeyBinding
+                            Key="Enter"
+                            Command="{Binding SendRequestCommand}"
+                            Modifiers="Control" />
+                    </TextBox.InputBindings>
+                </TextBox>
                 <DockPanel>
                     <TextBlock Text="Context Length: " />
                     <TextBlock
@@ -186,7 +193,7 @@
                 Padding="5"
                 HorizontalAlignment="Right"
                 Command="{Binding SendRequestCommand}">
-                <TextBlock Foreground="Black" Text="Send" />
+                <TextBlock Foreground="Black" Text="Send (Ctrl + Enter)" />
             </Button>
         </Border>
 
