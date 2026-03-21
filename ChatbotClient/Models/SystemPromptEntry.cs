@@ -8,7 +8,7 @@ namespace ChatbotClient.Models
 
         public string PromptText { get; set; }
 
-        public Guid Guid { get; set; }
+        public string Hash { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
