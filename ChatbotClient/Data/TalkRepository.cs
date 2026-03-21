@@ -53,6 +53,29 @@ namespace ChatbotClient.Data
             return entry;
         }
 
+        public async Task<SystemPromptEntry> GetOrAddSystemPromptEntryAsync(SystemPromptEntry entry)
+        {
+            var hash = SystemPromptEntry.NormalizeAndHash(entry.PromptText);
+
+            // 既存のハッシュがあるかチェック
+            var existingEntry = await db.SystemPrompts
+                .FirstOrDefaultAsync(x => x.Hash == hash)
+                .ConfigureAwait(false);
+
+            if (existingEntry != null)
+            {
+                // 既存があればそれを返す（追加はしない）
+                return existingEntry;
+            }
+
+            // 既存ハッシュなしの場合は追加
+            entry.Hash = hash;
+            await db.SystemPrompts.AddAsync(entry).ConfigureAwait(false);
+            await db.SaveChangesAsync().ConfigureAwait(false);
+
+            return entry;
+        }
+
         // Delete
         public async Task DeleteSessionAsync(int sessionId)
         {

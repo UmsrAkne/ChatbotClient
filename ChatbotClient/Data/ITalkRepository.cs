@@ -19,5 +19,7 @@ namespace ChatbotClient.Data
 
         // Delete
         Task DeleteSessionAsync(int sessionId);
+
+        Task<SystemPromptEntry> GetOrAddSystemPromptEntryAsync(SystemPromptEntry entry);
     }
 }

@@ -89,6 +89,14 @@ public class MainWindowViewModel : BindableBase
             Timestamp = DateTime.Now,
         };
 
+        var systemPrompt = new SystemPromptEntry()
+        {
+            PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
+        };
+
+        var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
+        userEntry.SystemPromptId = sp.Id;
+
         Talks.Add(userEntry);
         await talkRepository.AddEntryAsync(CurrentSession.Id, userEntry);
 
@@ -103,7 +111,7 @@ public class MainWindowViewModel : BindableBase
             {
                 Message = originalText,
                 ModelName = modelName,
-                SystemPrompt = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
+                SystemPrompt = sp.PromptText,
                 History = Talks.ToList(),
                 MessageLimit = MessageLimit,
             };
