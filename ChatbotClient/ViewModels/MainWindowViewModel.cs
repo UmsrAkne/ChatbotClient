@@ -77,14 +77,14 @@ public class MainWindowViewModel : BindableBase
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
-    public AsyncRelayCommand SendRequestCommand => new (async () =>
+    public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
     {
         Console.WriteLine("コマンドが実行されました");
 
         // 1. まず自分の発言を UI (Talks) に追加
         var userEntry = new TalkEntry
         {
-            Content = InputText,
+            Content = text,
             Role = "User",
             Timestamp = DateTime.Now,
         };
@@ -101,7 +101,6 @@ public class MainWindowViewModel : BindableBase
         await talkRepository.AddEntryAsync(CurrentSession.Id, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
-        var originalText = InputText;
         InputText = string.Empty;
 
         try
@@ -109,7 +108,7 @@ public class MainWindowViewModel : BindableBase
             var modelName = OpenRouterModels.GetModelId(CurrentModel);
             var request = new TalkRequest
             {
-                Message = originalText,
+                Message = text,
                 ModelName = modelName,
                 SystemPrompt = sp.PromptText,
                 History = Talks.ToList(),

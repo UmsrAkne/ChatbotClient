@@ -157,11 +157,15 @@
         <Border Grid.Row="2" Grid.Column="1">
 
             <StackPanel>
-                <TextBox Height="100" Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
+                <TextBox
+                    x:Name="PromptInputTextBox"
+                    Height="100"
+                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
                     <TextBox.InputBindings>
                         <KeyBinding
                             Key="Enter"
                             Command="{Binding SendRequestCommand}"
+                            CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
                             Modifiers="Control" />
                     </TextBox.InputBindings>
                 </TextBox>
@@ -192,7 +196,8 @@
                 Width="200"
                 Padding="5"
                 HorizontalAlignment="Right"
-                Command="{Binding SendRequestCommand}">
+                Command="{Binding SendRequestCommand}"
+                CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}">
                 <TextBlock Foreground="Black" Text="Send (Ctrl + Enter)" />
             </Button>
         </Border>
