@@ -17,12 +17,14 @@ namespace ChatbotClient.Models
         // 外部キー
         public int TalkSessionId { get; set; }
 
+        public SystemPromptEntry SystemPrompt { get; set; }
+
         // ナビゲーションプロパティ（多対1）
         public TalkSession TalkSession { get; set; }
 
         public AiModelType AiModelType { get; set; }
 
-        public int SystemPromptId { get; set; }
+        public int? SystemPromptId { get; set; }
 
         public int Index { get; set; }
 
