@@ -77,14 +77,14 @@ public class MainWindowViewModel : BindableBase
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
-    public AsyncRelayCommand SendRequestCommand => new (async () =>
+    public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
     {
         Console.WriteLine("コマンドが実行されました");
 
         // 1. まず自分の発言を UI (Talks) に追加
         var userEntry = new TalkEntry
         {
-            Content = InputText,
+            Content = text,
             Role = "User",
             Timestamp = DateTime.Now,
         };
@@ -101,7 +101,6 @@ public class MainWindowViewModel : BindableBase
         await talkRepository.AddEntryAsync(CurrentSession.Id, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
-        var originalText = InputText;
         InputText = string.Empty;
 
         try
@@ -109,7 +108,7 @@ public class MainWindowViewModel : BindableBase
             var modelName = OpenRouterModels.GetModelId(CurrentModel);
             var request = new TalkRequest
             {
-                Message = originalText,
+                Message = text,
                 ModelName = modelName,
                 SystemPrompt = sp.PromptText,
                 History = Talks.ToList(),
@@ -152,6 +151,11 @@ public class MainWindowViewModel : BindableBase
             Console.WriteLine(e);
             throw;
         }
+    });
+
+    public RelayCommand AddDummyTalkCommand => new (() =>
+    {
+        AddDummyTalk();
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
@@ -210,5 +214,18 @@ public class MainWindowViewModel : BindableBase
     {
         InputText = "Hello";
         ResponseText = "ここに応答が表示されます";
+    }
+
+    [Conditional("DEBUG")]
+    private void AddDummyTalk()
+    {
+        var dummyEntry = new TalkEntry
+        {
+            Content = $"これはデバッグ用のダミーメッセージです。時刻: {DateTime.Now:HH:mm:ss}\n長い文章のテストも兼ねています。あああああああああああああああああああああああ。",
+            Role = (Talks.Count % 2 == 0) ? "User" : "Assistant", // 交互にロールを変える
+            Timestamp = DateTime.Now,
+        };
+
+        Talks.Add(dummyEntry);
     }
 }

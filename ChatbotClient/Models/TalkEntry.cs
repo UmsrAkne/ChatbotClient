@@ -24,6 +24,10 @@ namespace ChatbotClient.Models
 
         public int SystemPromptId { get; set; }
 
+        public int Index { get; set; }
+
+        public bool IsFavorite { get; set; }
+
         public string GenerationId { get; set; }
     }
 }
