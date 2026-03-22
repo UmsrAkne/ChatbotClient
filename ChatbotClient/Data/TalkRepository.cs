@@ -32,7 +32,8 @@ namespace ChatbotClient.Data
             return db.TalkEntries
                 .AsNoTracking()
                 .Where(e => e.TalkSessionId == sessionId)
-                .OrderBy(e => e.Timestamp)
+                .OrderBy(e => e.Index)
+                .ThenBy(e => e.Timestamp)
                 .ToListAsync();
         }
 
@@ -48,6 +49,16 @@ namespace ChatbotClient.Data
         {
             // ensure entry is linked to the specified session
             entry.TalkSessionId = sessionId;
+
+            // Determine the next Index within this TalkSession to preserve order
+            var currentMaxIndex = await db.TalkEntries
+                .Where(e => e.TalkSessionId == sessionId)
+                .Select(e => (int?)e.Index)
+                .MaxAsync()
+                .ConfigureAwait(false);
+
+            entry.Index = currentMaxIndex.HasValue ? currentMaxIndex.Value + 1 : 0;
+
             await db.TalkEntries.AddAsync(entry).ConfigureAwait(false);
             await db.SaveChangesAsync().ConfigureAwait(false);
             return entry;
