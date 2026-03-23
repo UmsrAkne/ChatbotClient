@@ -32,6 +32,7 @@ namespace ChatbotClient.Data
             return db.TalkEntries
                 .AsNoTracking()
                 .Where(e => e.TalkSessionId == sessionId)
+                .Include(e => e.SystemPrompt)
                 .OrderBy(e => e.Index)
                 .ThenBy(e => e.Timestamp)
                 .ToListAsync();

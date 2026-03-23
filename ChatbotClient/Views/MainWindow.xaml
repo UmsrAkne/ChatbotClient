@@ -11,8 +11,8 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:ChatbotClient.ViewModels"
     Title="{Binding Title}"
-    Width="525"
-    Height="600"
+    Width="1024"
+    Height="768"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
     Background="{StaticResource DarkBackgroundBrush}"
@@ -70,7 +70,10 @@
             <ListBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:TalkSession}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="{StaticResource CommonForegroundBrush}" Text="{Binding Title}" />
+                        <TextBlock
+                            FontSize="{StaticResource CommonFontSize}"
+                            Foreground="{StaticResource CommonForegroundBrush}"
+                            Text="{Binding Title}" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

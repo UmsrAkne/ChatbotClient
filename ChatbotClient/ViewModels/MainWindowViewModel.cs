@@ -177,13 +177,24 @@ public class MainWindowViewModel : BindableBase
     {
         try
         {
+            var list = await talkRepository.GetSessionsAsync();
+
+            // セッションが一つもなければデフォルトを作成
+            if (list.Count == 0)
+            {
+                await talkRepository.AddSessionAsync(new TalkSession()
+                {
+                    Title = "New Session",
+                });
+            }
+
             await ReloadSessionsAsync();
 
-            if (CurrentSession != null)
-            {
-                var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
-                Talks.AddRange(ts);
-            }
+            // 前段の処理で最低一つは入っている前提なので First()
+            CurrentSession ??= Sessions.First();
+
+            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+            Talks.AddRange(ts);
         }
         catch (Exception ex)
         {

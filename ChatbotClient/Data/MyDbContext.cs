@@ -44,6 +44,11 @@ namespace ChatbotClient.Data
                 entity.Property(e => e.Content).IsRequired();
                 entity.Property(e => e.Role).IsRequired();
                 entity.Property(e => e.Timestamp).IsRequired();
+
+                entity.Property(e => e.SystemPromptId).IsRequired(false);
+                entity.HasOne(e => e.SystemPrompt)
+                    .WithMany()
+                    .HasForeignKey(e => e.SystemPromptId);
             });
         }
     }
