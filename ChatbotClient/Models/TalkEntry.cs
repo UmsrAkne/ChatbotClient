@@ -6,6 +6,8 @@ namespace ChatbotClient.Models
     {
         public int Id { get; set; }
 
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         public string Content { get; set; } = string.Empty;
 
         public string Role { get; set; } = string.Empty; // 発言者種別
@@ -15,7 +17,7 @@ namespace ChatbotClient.Models
             TimeZoneInfo.FindSystemTimeZoneById("Tokyo Standard Time"));
 
         // 外部キー
-        public int TalkSessionId { get; set; }
+        public Guid TalkSessionGuid { get; set; }
 
         public SystemPromptEntry SystemPrompt { get; set; }
 
@@ -24,7 +26,7 @@ namespace ChatbotClient.Models
 
         public AiModelType AiModelType { get; set; }
 
-        public int? SystemPromptId { get; set; }
+        public Guid? SystemPromptGuid { get; set; }
 
         public int Index { get; set; }
 

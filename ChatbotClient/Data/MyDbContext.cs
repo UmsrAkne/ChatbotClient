@@ -34,7 +34,8 @@ namespace ChatbotClient.Data
 
                 entity.HasMany(e => e.Entries)
                       .WithOne(e => e.TalkSession!)
-                      .HasForeignKey(e => e.TalkSessionId)
+                      .HasForeignKey(e => e.TalkSessionGuid)
+                      .HasPrincipalKey(e => e.Guid)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -45,10 +46,11 @@ namespace ChatbotClient.Data
                 entity.Property(e => e.Role).IsRequired();
                 entity.Property(e => e.Timestamp).IsRequired();
 
-                entity.Property(e => e.SystemPromptId).IsRequired(false);
+                entity.Property(e => e.SystemPromptGuid).IsRequired(false);
                 entity.HasOne(e => e.SystemPrompt)
                     .WithMany()
-                    .HasForeignKey(e => e.SystemPromptId);
+                    .HasForeignKey(e => e.SystemPromptGuid)
+                    .HasPrincipalKey(s => s.Guid);
             });
         }
     }

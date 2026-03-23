@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatbotClient.Models;
@@ -27,11 +28,11 @@ namespace ChatbotClient.Data
                 .ToListAsync();
         }
 
-        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(int sessionId)
+        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionGuid)
         {
             return db.TalkEntries
                 .AsNoTracking()
-                .Where(e => e.TalkSessionId == sessionId)
+                .Where(e => e.TalkSessionGuid == sessionGuid)
                 .Include(e => e.SystemPrompt)
                 .OrderBy(e => e.Index)
                 .ThenBy(e => e.Timestamp)
@@ -46,14 +47,14 @@ namespace ChatbotClient.Data
             return session;
         }
 
-        public async Task<TalkEntry> AddEntryAsync(int sessionId, TalkEntry entry)
+        public async Task<TalkEntry> AddEntryAsync(Guid sessionGuid, TalkEntry entry)
         {
             // ensure entry is linked to the specified session
-            entry.TalkSessionId = sessionId;
+            entry.TalkSessionGuid = sessionGuid;
 
             // Determine the next Index within this TalkSession to preserve order
             var currentMaxIndex = await db.TalkEntries
-                .Where(e => e.TalkSessionId == sessionId)
+                .Where(e => e.TalkSessionGuid == sessionGuid)
                 .Select(e => (int?)e.Index)
                 .MaxAsync()
                 .ConfigureAwait(false);

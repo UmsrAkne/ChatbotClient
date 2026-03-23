@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ChatbotClient.Models;
 
@@ -11,11 +12,11 @@ namespace ChatbotClient.Data
     {
         // Read
         Task<List<TalkSession>> GetSessionsAsync();
-        Task<List<TalkEntry>> GetEntriesBySessionIdAsync(int sessionId);
+        Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionGuid);
 
         // Create
         Task<TalkSession> AddSessionAsync(TalkSession session);
-        Task<TalkEntry> AddEntryAsync(int sessionId, TalkEntry entry);
+        Task<TalkEntry> AddEntryAsync(Guid sessionGuid, TalkEntry entry);
 
         // Delete
         Task DeleteSessionAsync(int sessionId);

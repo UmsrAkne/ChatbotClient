@@ -73,7 +73,7 @@ public class MainWindowViewModel : BindableBase
         }
 
         Talks.Clear();
-        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
@@ -95,10 +95,10 @@ public class MainWindowViewModel : BindableBase
         };
 
         var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
-        userEntry.SystemPromptId = sp.Id;
+        userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
-        await talkRepository.AddEntryAsync(CurrentSession.Id, userEntry);
+        await talkRepository.AddEntryAsync(CurrentSession.Guid, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
         InputText = string.Empty;
@@ -169,7 +169,7 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        await talkRepository.AddEntryAsync(CurrentSession.Id, talkEntry);
+        await talkRepository.AddEntryAsync(CurrentSession.Guid, talkEntry);
         Talks.Add(talkEntry);
     }
 
@@ -193,7 +193,7 @@ public class MainWindowViewModel : BindableBase
             // 前段の処理で最低一つは入っている前提なので First()
             CurrentSession ??= Sessions.First();
 
-            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
             Talks.AddRange(ts);
         }
         catch (Exception ex)
