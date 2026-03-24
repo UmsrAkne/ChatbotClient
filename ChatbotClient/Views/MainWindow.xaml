@@ -305,6 +305,7 @@
                         SelectionMode="Extended">
                         <b:Interaction.Behaviors>
                             <behaviors:DropFilesBehavior />
+                            <behaviors:DeleteListItemBehavior />
                         </b:Interaction.Behaviors>
 
                         <ListBox.ItemTemplate>
