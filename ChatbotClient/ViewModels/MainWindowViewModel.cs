@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
@@ -98,7 +99,8 @@ public class MainWindowViewModel : BindableBase
             Timestamp = DateTime.Now,
         };
 
-        var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(currentSystemPrompt);
+        var systemPrompt = new SystemPromptEntry() { PromptText = BuildSystemPrompt(), };
+        var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
         userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
@@ -163,6 +165,34 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
+
+    private string BuildSystemPrompt()
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine("# Instructions");
+        builder.AppendLine(CurrentSystemPrompt.PromptText);
+
+        if (AttachedFiles.Count == 0)
+        {
+            return builder.ToString();
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("# Attached Context Files");
+        builder.AppendLine("Below are the contents of the files referenced for this task.");
+
+        foreach (var file in AttachedFiles)
+        {
+            builder.AppendLine();
+            builder.AppendLine($"## [File: {file.FullPath}]");
+            builder.AppendLine("```");
+            builder.AppendLine(file.GetLatestContent());
+            builder.AppendLine("```");
+        }
+
+        return builder.ToString();
+    }
 
     private async Task RegisterChat(TalkEntry talkEntry)
     {
