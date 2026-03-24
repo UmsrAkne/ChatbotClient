@@ -256,7 +256,7 @@
                 <TextBox
                     Grid.Row="1"
                     AcceptsReturn="True"
-                    Text=""
+                    Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap" />
 
             </Grid>

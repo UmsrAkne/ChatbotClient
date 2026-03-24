@@ -22,6 +22,7 @@ public class MainWindowViewModel : BindableBase
     private AiModelType currentModel;
     private TalkSession currentSession;
     private int messageLimit = 10;
+    private SystemPromptEntry currentSystemPrompt;
 
     public MainWindowViewModel(ITalkRepository talkRepository)
     {
@@ -63,6 +64,12 @@ public class MainWindowViewModel : BindableBase
 
     public TalkSession CurrentSession { get => currentSession; set => SetProperty(ref currentSession, value); }
 
+    public SystemPromptEntry CurrentSystemPrompt
+    {
+        get => currentSystemPrompt;
+        set => SetProperty(ref currentSystemPrompt, value);
+    }
+
     public ObservableCollection<TalkEntry> Talks { get; set; } = new ();
 
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
@@ -89,12 +96,7 @@ public class MainWindowViewModel : BindableBase
             Timestamp = DateTime.Now,
         };
 
-        var systemPrompt = new SystemPromptEntry()
-        {
-            PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
-        };
-
-        var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
+        var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(currentSystemPrompt);
         userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
@@ -195,6 +197,11 @@ public class MainWindowViewModel : BindableBase
 
             var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
             Talks.AddRange(ts);
+
+            CurrentSystemPrompt = new SystemPromptEntry
+            {
+                PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
+            };
         }
         catch (Exception ex)
         {
