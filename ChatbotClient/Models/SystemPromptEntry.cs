@@ -9,6 +9,8 @@ namespace ChatbotClient.Models
     {
         public int Id { get; set; }
 
+        public Guid Guid { get; set; } = Guid.NewGuid();
+
         public string PromptText { get; set; }
 
         public string Hash { get; set; }

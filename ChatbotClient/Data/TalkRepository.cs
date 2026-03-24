@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ChatbotClient.Models;
@@ -27,11 +28,11 @@ namespace ChatbotClient.Data
                 .ToListAsync();
         }
 
-        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(int sessionId)
+        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionGuid)
         {
             return db.TalkEntries
                 .AsNoTracking()
-                .Where(e => e.TalkSessionId == sessionId)
+                .Where(e => e.TalkSessionGuid == sessionGuid)
                 .Include(e => e.SystemPrompt)
                 .OrderBy(e => e.Index)
                 .ThenBy(e => e.Timestamp)
@@ -46,14 +47,14 @@ namespace ChatbotClient.Data
             return session;
         }
 
-        public async Task<TalkEntry> AddEntryAsync(int sessionId, TalkEntry entry)
+        public async Task<TalkEntry> AddEntryAsync(Guid sessionGuid, TalkEntry entry)
         {
             // ensure entry is linked to the specified session
-            entry.TalkSessionId = sessionId;
+            entry.TalkSessionGuid = sessionGuid;
 
             // Determine the next Index within this TalkSession to preserve order
             var currentMaxIndex = await db.TalkEntries
-                .Where(e => e.TalkSessionId == sessionId)
+                .Where(e => e.TalkSessionGuid == sessionGuid)
                 .Select(e => (int?)e.Index)
                 .MaxAsync()
                 .ConfigureAwait(false);
@@ -86,6 +87,51 @@ namespace ChatbotClient.Data
             await db.SaveChangesAsync().ConfigureAwait(false);
 
             return entry;
+        }
+
+        public async Task<IEnumerable<SystemPromptEntry>> GetRecentSystemPromptHistoryAsync(int count)
+        {
+            if (count <= 0)
+            {
+                return Array.Empty<SystemPromptEntry>();
+            }
+
+            // Get most recently used SystemPrompt guids by the last TalkEntry timestamp
+            var recentGuidsWithOrder = await db.TalkEntries
+                .AsNoTracking()
+                .Where(te => te.SystemPromptGuid != null)
+                .GroupBy(te => te.SystemPromptGuid!.Value)
+                .Select(g => new { Guid = g.Key, LastUsed = g.Max(e => e.Timestamp) })
+                .OrderByDescending(x => x.LastUsed)
+                .Take(count)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            if (recentGuidsWithOrder.Count == 0)
+            {
+                return Array.Empty<SystemPromptEntry>();
+            }
+
+            var guids = recentGuidsWithOrder.Select(x => x.Guid).ToList();
+
+            var prompts = await db.SystemPrompts
+                .AsNoTracking()
+                .Where(sp => guids.Contains(sp.Guid))
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            // Preserve the "recent" order determined by TalkEntry usage
+            var promptByGuid = prompts.ToDictionary(p => p.Guid, p => p);
+            var ordered = new List<SystemPromptEntry>(prompts.Count);
+            foreach (var item in recentGuidsWithOrder)
+            {
+                if (promptByGuid.TryGetValue(item.Guid, out var prompt))
+                {
+                    ordered.Add(prompt);
+                }
+            }
+
+            return ordered;
         }
 
         // Delete

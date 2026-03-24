@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
 using ChatbotClient.Utils;
 using CommunityToolkit.Mvvm.Input;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace ChatbotClient.ViewModels;
@@ -22,6 +25,8 @@ public class MainWindowViewModel : BindableBase
     private AiModelType currentModel;
     private TalkSession currentSession;
     private int messageLimit = 10;
+    private SystemPromptEntry currentSystemPrompt;
+    private int currentHistoryIndex;
 
     public MainWindowViewModel(ITalkRepository talkRepository)
     {
@@ -63,7 +68,21 @@ public class MainWindowViewModel : BindableBase
 
     public TalkSession CurrentSession { get => currentSession; set => SetProperty(ref currentSession, value); }
 
+    public SystemPromptEntry CurrentSystemPrompt
+    {
+        get => currentSystemPrompt;
+        private set => SetProperty(ref currentSystemPrompt, value);
+    }
+
     public ObservableCollection<TalkEntry> Talks { get; set; } = new ();
+
+    public ObservableCollection<AttachedFile> AttachedFiles { get; set; } = new ();
+
+    public int CurrentHistoryIndex
+    {
+        get => currentHistoryIndex;
+        set => SetProperty(ref currentHistoryIndex, value);
+    }
 
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
@@ -73,8 +92,14 @@ public class MainWindowViewModel : BindableBase
         }
 
         Talks.Clear();
-        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
+    });
+
+    public DelegateCommand<object> BrowseHistoryCommand => new ((direction) =>
+    {
+        var d = int.Parse((string)direction);
+        MapsToHistoryIndex(d);
     });
 
     public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
@@ -89,16 +114,12 @@ public class MainWindowViewModel : BindableBase
             Timestamp = DateTime.Now,
         };
 
-        var systemPrompt = new SystemPromptEntry()
-        {
-            PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
-        };
-
+        var systemPrompt = new SystemPromptEntry() { PromptText = BuildSystemPrompt(), };
         var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
-        userEntry.SystemPromptId = sp.Id;
+        userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
-        await talkRepository.AddEntryAsync(CurrentSession.Id, userEntry);
+        await talkRepository.AddEntryAsync(CurrentSession.Guid, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
         InputText = string.Empty;
@@ -160,6 +181,53 @@ public class MainWindowViewModel : BindableBase
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
 
+    private List<SystemPromptEntry> PromptHistory { get; set; }
+
+    private void MapsToHistoryIndex(int direction)
+    {
+        if (PromptHistory == null || !PromptHistory.Any())
+        {
+            return;
+        }
+
+        var nextIndex = CurrentHistoryIndex + direction;
+
+        if (nextIndex >= 0 && nextIndex < PromptHistory.Count)
+        {
+            CurrentHistoryIndex = nextIndex;
+            CurrentSystemPrompt = new SystemPromptEntry()
+                { PromptText = PromptHistory[CurrentHistoryIndex].PromptText, };
+        }
+    }
+
+    private string BuildSystemPrompt()
+    {
+        var builder = new StringBuilder();
+
+        builder.AppendLine("# Instructions");
+        builder.AppendLine(CurrentSystemPrompt.PromptText);
+
+        if (AttachedFiles.Count == 0)
+        {
+            return builder.ToString();
+        }
+
+        builder.AppendLine();
+        builder.AppendLine("# Attached Context Files");
+        builder.AppendLine("Below are the contents of the files referenced for this task.");
+
+        foreach (var file in AttachedFiles)
+        {
+            builder.AppendLine();
+            builder.AppendLine($"## [File: {file.FullPath}]");
+            builder.AppendLine("```");
+            builder.AppendLine(file.GetLatestContent());
+            builder.AppendLine("```");
+        }
+
+        return builder.ToString();
+    }
+
     private async Task RegisterChat(TalkEntry talkEntry)
     {
         if (CurrentSession == null)
@@ -169,7 +237,7 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        await talkRepository.AddEntryAsync(CurrentSession.Id, talkEntry);
+        await talkRepository.AddEntryAsync(CurrentSession.Guid, talkEntry);
         Talks.Add(talkEntry);
     }
 
@@ -193,8 +261,17 @@ public class MainWindowViewModel : BindableBase
             // 前段の処理で最低一つは入っている前提なので First()
             CurrentSession ??= Sessions.First();
 
-            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Id);
+            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
             Talks.AddRange(ts);
+
+            CurrentSystemPrompt = new SystemPromptEntry
+            {
+                PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
+            };
+
+            var spList = await talkRepository.GetRecentSystemPromptHistoryAsync(5);
+            PromptHistory = spList.ToList();
+            CurrentHistoryIndex = PromptHistory.Count - 1;
         }
         catch (Exception ex)
         {
