@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ChatbotClient.Models;
 using ChatbotClient.ViewModels;
 using Microsoft.Xaml.Behaviors;
@@ -22,6 +23,7 @@ namespace ChatbotClient.Behaviors
             AssociatedObject.AllowDrop = true;
             AssociatedObject.DragOver += OnDragOver;
             AssociatedObject.Drop += OnDrop;
+            AssociatedObject.PreviewKeyDown += OnPreviewKeyDown;
         }
 
         protected override void OnDetaching()
@@ -30,6 +32,7 @@ namespace ChatbotClient.Behaviors
             {
                 AssociatedObject.DragOver -= OnDragOver;
                 AssociatedObject.Drop -= OnDrop;
+                AssociatedObject.PreviewKeyDown -= OnPreviewKeyDown;
             }
 
             base.OnDetaching();
@@ -69,6 +72,41 @@ namespace ChatbotClient.Behaviors
                 // ignore unexpected errors to avoid crashing on a drop
                 e.Handled = true;
             }
+        }
+
+        // Todo : 後ほど別のビヘイビアに分割する予定
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key != Key.Delete)
+            {
+                return;
+            }
+
+            var listBox = AssociatedObject;
+            if (listBox == null)
+            {
+                return;
+            }
+
+            var viewModel = listBox.DataContext as MainWindowViewModel;
+            if (viewModel == null)
+            {
+                return;
+            }
+
+            // Collect selected items first to avoid modifying a collection during enumeration
+            var toRemove = listBox.SelectedItems.Cast<AttachedFile>().ToList();
+            if (toRemove.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var item in toRemove)
+            {
+                viewModel.AttachedFiles.Remove(item);
+            }
+
+            e.Handled = true;
         }
     }
 }

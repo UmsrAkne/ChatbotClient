@@ -272,7 +272,8 @@
                     <ListBox
                         Background="Transparent"
                         BorderThickness="0"
-                        ItemsSource="{Binding AttachedFiles}">
+                        ItemsSource="{Binding AttachedFiles}"
+                        SelectionMode="Extended">
                         <b:Interaction.Behaviors>
                             <behaviors:DropFilesBehavior />
                         </b:Interaction.Behaviors>
