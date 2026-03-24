@@ -250,9 +250,34 @@
                 </Grid.RowDefinitions>
 
 
-                <Border Grid.Row="0">
+                <DockPanel Grid.Row="0">
                     <TextBlock Margin="0,0,0,5" Text="System Prompt Here..." />
-                </Border>
+
+                    <Button
+                        Width="40"
+                        Margin="5,0"
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Right">
+                        <Button.Content>
+                            <TextBlock
+                                FontWeight="Bold"
+                                Foreground="Black"
+                                Text="→" />
+                        </Button.Content>
+                    </Button>
+
+                    <Button
+                        Width="40"
+                        HorizontalAlignment="Right"
+                        DockPanel.Dock="Right">
+                        <Button.Content>
+                            <TextBlock
+                                FontWeight="Bold"
+                                Foreground="Black"
+                                Text="←" />
+                        </Button.Content>
+                    </Button>
+                </DockPanel>
 
                 <TextBox
                     Grid.Row="1"
