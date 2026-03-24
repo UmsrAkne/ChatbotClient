@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +10,7 @@ using ChatbotClient.Data;
 using ChatbotClient.Models;
 using ChatbotClient.Utils;
 using CommunityToolkit.Mvvm.Input;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace ChatbotClient.ViewModels;
@@ -24,6 +26,7 @@ public class MainWindowViewModel : BindableBase
     private TalkSession currentSession;
     private int messageLimit = 10;
     private SystemPromptEntry currentSystemPrompt;
+    private int currentHistoryIndex;
 
     public MainWindowViewModel(ITalkRepository talkRepository)
     {
@@ -75,6 +78,14 @@ public class MainWindowViewModel : BindableBase
 
     public ObservableCollection<AttachedFile> AttachedFiles { get; set; } = new ();
 
+    public List<SystemPromptEntry> PromptHistory { get; set; }
+
+    public int CurrentHistoryIndex
+    {
+        get => currentHistoryIndex;
+        set => SetProperty(ref currentHistoryIndex, value);
+    }
+
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
         if (CurrentSession == null)
@@ -86,6 +97,29 @@ public class MainWindowViewModel : BindableBase
         var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
+
+    public DelegateCommand<object> SetSystemPromptCommand => new ((direction) =>
+    {
+        var d = int.Parse((string)direction);
+        MoveHistory(d);
+    });
+
+    private void MoveHistory(int direction)
+    {
+        if (PromptHistory == null || !PromptHistory.Any())
+        {
+            return;
+        }
+
+        var nextIndex = CurrentHistoryIndex + direction;
+
+        if (nextIndex >= 0 && nextIndex < PromptHistory.Count)
+        {
+            CurrentHistoryIndex = nextIndex;
+            CurrentSystemPrompt = new SystemPromptEntry()
+                { PromptText = PromptHistory[CurrentHistoryIndex].PromptText, };
+        }
+    }
 
     public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
     {
@@ -234,6 +268,10 @@ public class MainWindowViewModel : BindableBase
             {
                 PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
             };
+
+            var spList = await talkRepository.GetRecentSystemPromptHistoryAsync(5);
+            PromptHistory = spList.ToList();
+            CurrentHistoryIndex = PromptHistory.Count - 1;
         }
         catch (Exception ex)
         {

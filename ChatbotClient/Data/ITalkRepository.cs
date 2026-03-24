@@ -22,5 +22,7 @@ namespace ChatbotClient.Data
         Task DeleteSessionAsync(int sessionId);
 
         Task<SystemPromptEntry> GetOrAddSystemPromptEntryAsync(SystemPromptEntry entry);
+
+        Task<IEnumerable<SystemPromptEntry>> GetRecentSystemPromptHistoryAsync(int count);
     }
 }

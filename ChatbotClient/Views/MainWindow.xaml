@@ -257,6 +257,8 @@
                         Width="40"
                         Margin="5,0"
                         HorizontalAlignment="Right"
+                        Command="{Binding SetSystemPromptCommand}"
+                        CommandParameter="1"
                         DockPanel.Dock="Right">
                         <Button.Content>
                             <TextBlock
@@ -269,6 +271,8 @@
                     <Button
                         Width="40"
                         HorizontalAlignment="Right"
+                        Command="{Binding SetSystemPromptCommand}"
+                        CommandParameter="-1"
                         DockPanel.Dock="Right">
                         <Button.Content>
                             <TextBlock

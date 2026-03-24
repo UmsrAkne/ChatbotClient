@@ -89,6 +89,51 @@ namespace ChatbotClient.Data
             return entry;
         }
 
+        public async Task<IEnumerable<SystemPromptEntry>> GetRecentSystemPromptHistoryAsync(int count)
+        {
+            if (count <= 0)
+            {
+                return Array.Empty<SystemPromptEntry>();
+            }
+
+            // Get most recently used SystemPrompt guids by the last TalkEntry timestamp
+            var recentGuidsWithOrder = await db.TalkEntries
+                .AsNoTracking()
+                .Where(te => te.SystemPromptGuid != null)
+                .GroupBy(te => te.SystemPromptGuid!.Value)
+                .Select(g => new { Guid = g.Key, LastUsed = g.Max(e => e.Timestamp) })
+                .OrderByDescending(x => x.LastUsed)
+                .Take(count)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            if (recentGuidsWithOrder.Count == 0)
+            {
+                return Array.Empty<SystemPromptEntry>();
+            }
+
+            var guids = recentGuidsWithOrder.Select(x => x.Guid).ToList();
+
+            var prompts = await db.SystemPrompts
+                .AsNoTracking()
+                .Where(sp => guids.Contains(sp.Guid))
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            // Preserve the "recent" order determined by TalkEntry usage
+            var promptByGuid = prompts.ToDictionary(p => p.Guid, p => p);
+            var ordered = new List<SystemPromptEntry>(prompts.Count);
+            foreach (var item in recentGuidsWithOrder)
+            {
+                if (promptByGuid.TryGetValue(item.Guid, out var prompt))
+                {
+                    ordered.Add(prompt);
+                }
+            }
+
+            return ordered;
+        }
+
         // Delete
         public async Task DeleteSessionAsync(int sessionId)
         {
