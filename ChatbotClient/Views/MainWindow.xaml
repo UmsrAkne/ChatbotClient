@@ -35,6 +35,7 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -218,6 +219,27 @@
                     CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}">
                     <TextBlock Foreground="Black" Text="Send (Ctrl + Enter)" />
                 </Button>
+            </StackPanel>
+        </Border>
+
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            Grid.Column="2"
+            Width="40">
+            <StackPanel>
+                <ToggleButton
+                    Height="35"
+                    Margin="4,0,0,0"
+                    ToolTip="Edit System Prompt">
+                    <ToggleButton.Content>
+                        <TextBlock
+                            Margin="0,0,0,6"
+                            FontWeight="Bold"
+                            Foreground="Black"
+                            Text="&gt;_" />
+                    </ToggleButton.Content>
+                </ToggleButton>
             </StackPanel>
         </Border>
 
