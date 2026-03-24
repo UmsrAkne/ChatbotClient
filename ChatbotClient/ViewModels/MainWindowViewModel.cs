@@ -71,14 +71,12 @@ public class MainWindowViewModel : BindableBase
     public SystemPromptEntry CurrentSystemPrompt
     {
         get => currentSystemPrompt;
-        set => SetProperty(ref currentSystemPrompt, value);
+        private set => SetProperty(ref currentSystemPrompt, value);
     }
 
     public ObservableCollection<TalkEntry> Talks { get; set; } = new ();
 
     public ObservableCollection<AttachedFile> AttachedFiles { get; set; } = new ();
-
-    public List<SystemPromptEntry> PromptHistory { get; set; }
 
     public int CurrentHistoryIndex
     {
@@ -98,28 +96,11 @@ public class MainWindowViewModel : BindableBase
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
-    public DelegateCommand<object> SetSystemPromptCommand => new ((direction) =>
+    public DelegateCommand<object> BrowseHistoryCommand => new ((direction) =>
     {
         var d = int.Parse((string)direction);
-        MoveHistory(d);
+        MapsToHistoryIndex(d);
     });
-
-    private void MoveHistory(int direction)
-    {
-        if (PromptHistory == null || !PromptHistory.Any())
-        {
-            return;
-        }
-
-        var nextIndex = CurrentHistoryIndex + direction;
-
-        if (nextIndex >= 0 && nextIndex < PromptHistory.Count)
-        {
-            CurrentHistoryIndex = nextIndex;
-            CurrentSystemPrompt = new SystemPromptEntry()
-                { PromptText = PromptHistory[CurrentHistoryIndex].PromptText, };
-        }
-    }
 
     public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
     {
@@ -199,6 +180,25 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
+
+    private List<SystemPromptEntry> PromptHistory { get; set; }
+
+    private void MapsToHistoryIndex(int direction)
+    {
+        if (PromptHistory == null || !PromptHistory.Any())
+        {
+            return;
+        }
+
+        var nextIndex = CurrentHistoryIndex + direction;
+
+        if (nextIndex >= 0 && nextIndex < PromptHistory.Count)
+        {
+            CurrentHistoryIndex = nextIndex;
+            CurrentSystemPrompt = new SystemPromptEntry()
+                { PromptText = PromptHistory[CurrentHistoryIndex].PromptText, };
+        }
+    }
 
     private string BuildSystemPrompt()
     {

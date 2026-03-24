@@ -257,7 +257,7 @@
                         Width="40"
                         Margin="5,0"
                         HorizontalAlignment="Right"
-                        Command="{Binding SetSystemPromptCommand}"
+                        Command="{Binding BrowseHistoryCommand}"
                         CommandParameter="1"
                         DockPanel.Dock="Right">
                         <Button.Content>
@@ -271,7 +271,7 @@
                     <Button
                         Width="40"
                         HorizontalAlignment="Right"
-                        Command="{Binding SetSystemPromptCommand}"
+                        Command="{Binding BrowseHistoryCommand}"
                         CommandParameter="-1"
                         DockPanel.Dock="Right">
                         <Button.Content>
