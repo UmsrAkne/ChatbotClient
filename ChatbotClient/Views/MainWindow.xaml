@@ -35,6 +35,19 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
+            <ColumnDefinition x:Name="EditorColumn">
+                <ColumnDefinition.Style>
+                    <Style x:Name="EditorColumnStyle" TargetType="ColumnDefinition">
+                        <Setter Property="Width" Value="0" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=SidebarToggle, Path=IsChecked}" Value="True">
+                                <Setter Property="Width" Value="300" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ColumnDefinition.Style>
+            </ColumnDefinition>
+
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
@@ -226,11 +239,40 @@
             Grid.Row="0"
             Grid.RowSpan="4"
             Grid.Column="2"
+            Background="{StaticResource MiddleBackgroundBrush}"
+            Visibility="{Binding ElementName=SidebarToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+            <Grid Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+
+                <Border Grid.Row="0">
+                    <TextBlock Margin="0,0,0,5" Text="System Prompt Here..." />
+                </Border>
+
+                <TextBox
+                    Grid.Row="1"
+                    AcceptsReturn="True"
+                    Text=""
+                    TextWrapping="Wrap" />
+
+            </Grid>
+        </Border>
+
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="4"
+            Grid.Column="3"
             Width="40">
             <StackPanel>
                 <ToggleButton
+                    x:Name="SidebarToggle"
                     Height="35"
                     Margin="4,0,0,0"
+                    IsChecked="True"
                     ToolTip="Edit System Prompt">
                     <ToggleButton.Content>
                         <TextBlock
