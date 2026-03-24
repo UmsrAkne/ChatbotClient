@@ -72,6 +72,8 @@ public class MainWindowViewModel : BindableBase
 
     public ObservableCollection<TalkEntry> Talks { get; set; } = new ();
 
+    public ObservableCollection<AttachedFile> AttachedFiles { get; set; } = new ();
+
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
         if (CurrentSession == null)

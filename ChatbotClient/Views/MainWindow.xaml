@@ -246,6 +246,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
 
@@ -258,6 +259,40 @@
                     AcceptsReturn="True"
                     Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
                     TextWrapping="Wrap" />
+
+                <Border
+                    Grid.Row="2"
+                    Height="150"
+                    AllowDrop="True"
+                    Background="{StaticResource MiddleBackgroundBrush}"
+                    BorderBrush="{StaticResource CommonForegroundBrush}"
+                    BorderThickness="1"
+                    CornerRadius="3">
+
+                    <ListBox
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ItemsSource="{Binding AttachedFiles}">
+                        <b:Interaction.Behaviors>
+                            <behaviors:DropFilesBehavior />
+                        </b:Interaction.Behaviors>
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        FontSize="{StaticResource CommonFontSize}"
+                                        Foreground="{StaticResource CommonForegroundBrush}"
+                                        Text="📄 " />
+                                    <TextBlock
+                                        FontSize="{StaticResource CommonFontSize}"
+                                        Foreground="{StaticResource CommonForegroundBrush}"
+                                        Text="{Binding FileName}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Border>
 
             </Grid>
         </Border>
