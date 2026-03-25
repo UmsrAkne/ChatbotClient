@@ -114,7 +114,11 @@ public class MainWindowViewModel : BindableBase
             Timestamp = DateTime.Now,
         };
 
-        var systemPrompt = new SystemPromptEntry() { PromptText = BuildSystemPrompt(), };
+        var systemPrompt = new SystemPromptEntry()
+        {
+            PromptText = SystemPromptFormatter.BuildSystemPrompt(CurrentSystemPrompt.PromptText, AttachedFiles.ToList()),
+        };
+
         var sp = await talkRepository.GetOrAddSystemPromptEntryAsync(systemPrompt);
         userEntry.SystemPromptGuid = sp.Guid;
 
@@ -198,34 +202,6 @@ public class MainWindowViewModel : BindableBase
             CurrentSystemPrompt = new SystemPromptEntry()
                 { PromptText = PromptHistory[CurrentHistoryIndex].PromptText, };
         }
-    }
-
-    private string BuildSystemPrompt()
-    {
-        var builder = new StringBuilder();
-
-        builder.AppendLine("# Instructions");
-        builder.AppendLine(CurrentSystemPrompt.PromptText);
-
-        if (AttachedFiles.Count == 0)
-        {
-            return builder.ToString();
-        }
-
-        builder.AppendLine();
-        builder.AppendLine("# Attached Context Files");
-        builder.AppendLine("Below are the contents of the files referenced for this task.");
-
-        foreach (var file in AttachedFiles)
-        {
-            builder.AppendLine();
-            builder.AppendLine($"## [File: {file.FullPath}]");
-            builder.AppendLine("```");
-            builder.AppendLine(file.GetLatestContent());
-            builder.AppendLine("```");
-        }
-
-        return builder.ToString();
     }
 
     private async Task RegisterChat(TalkEntry talkEntry)
