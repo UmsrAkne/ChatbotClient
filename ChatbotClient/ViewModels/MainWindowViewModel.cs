@@ -278,6 +278,21 @@ public class MainWindowViewModel : BindableBase
     {
         InputText = "Hello";
         ResponseText = "ここに応答が表示されます";
+
+        Sessions.Add(new TalkSession() { Title = "Session 1", });
+        Sessions.Add(new TalkSession() { Title = "Session 2", });
+
+        Talks.Add(new TalkEntry()
+        {
+            Role = "user",
+            Content = "Hello",
+        });
+
+        Talks.Add(new TalkEntry()
+        {
+            Role = "assistant",
+            Content = "Hello! How are you?",
+        });
     }
 
     [Conditional("DEBUG")]
