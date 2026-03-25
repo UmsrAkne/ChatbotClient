@@ -9,8 +9,14 @@
         <SolidColorBrush x:Key="MiddleBackgroundBrush" Color="#444455" />
 
         <SolidColorBrush x:Key="CommonForegroundBrush" Color="#DDDDDD" />
+        <SolidColorBrush x:Key="BorderBrush" Color="#999999" />
+
+        <SolidColorBrush x:Key="SpeechBubbleBackgroundBrush" Color="#48486A" />
 
         <system:Double x:Key="CommonFontSize">15</system:Double>
+        <system:Double x:Key="ButtonHeight">30</system:Double>
+
+        <CornerRadius x:Key="CommonCornerRadius">5</CornerRadius>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Application.Resources>
 </prism:PrismApplication>

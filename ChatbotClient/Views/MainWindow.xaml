@@ -11,7 +11,7 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:viewModels="clr-namespace:ChatbotClient.ViewModels"
     Title="{Binding Title}"
-    Width="1024"
+    Width="1280"
     Height="768"
     d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel}"
     prism:ViewModelLocator.AutoWireViewModel="True"
@@ -28,6 +28,8 @@
             <Setter Property="Foreground" Value="{StaticResource CommonForegroundBrush}" />
             <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
             <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
+            <Setter Property="Margin" Value="4" />
+            <Setter Property="BorderThickness" Value="0" />
         </Style>
     </Window.Resources>
 
@@ -61,6 +63,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="0"
+            Height="{StaticResource ButtonHeight}"
             Command="{Binding AddSessionCommand}">
 
             <Button.Content>
@@ -68,30 +71,37 @@
             </Button.Content>
         </Button>
 
-        <ListBox
+        <Border
             Grid.Row="1"
             Grid.RowSpan="3"
             Grid.Column="0"
-            Width="200"
+            Margin="0,8,0,0"
             Background="{StaticResource MiddleBackgroundBrush}"
-            ItemsSource="{Binding Sessions}"
-            SelectedItem="{Binding CurrentSession}">
-            <b:Interaction.Triggers>
-                <b:EventTrigger EventName="SelectionChanged">
-                    <b:InvokeCommandAction Command="{Binding LoadSessionAsyncCommand}" />
-                </b:EventTrigger>
-            </b:Interaction.Triggers>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:TalkSession}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            FontSize="{StaticResource CommonFontSize}"
-                            Foreground="{StaticResource CommonForegroundBrush}"
-                            Text="{Binding Title}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            CornerRadius="{StaticResource CommonCornerRadius}">
+
+            <ListBox
+                Width="200"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding Sessions}"
+                SelectedItem="{Binding CurrentSession}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding LoadSessionAsyncCommand}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:TalkSession}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontSize="{StaticResource CommonFontSize}"
+                                Foreground="{StaticResource CommonForegroundBrush}"
+                                Text="{Binding Title}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
 
         <Border Grid.Row="0" Grid.Column="1">
             <ComboBox
@@ -117,7 +127,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="5">
+                        <Grid Margin="5,5">
                             <Grid.Resources>
 
                                 <Style TargetType="TextBlock">
@@ -129,10 +139,21 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="0.5*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Padding="10" CornerRadius="10">
+                            <Border Padding="5" CornerRadius="10">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Role}" Value="User">
+                                                <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
@@ -179,19 +200,27 @@
         <Border Grid.Row="2" Grid.Column="1">
 
             <StackPanel>
-                <TextBox
-                    x:Name="PromptInputTextBox"
-                    Height="100"
-                    Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
-                    <TextBox.InputBindings>
-                        <KeyBinding
-                            Key="Enter"
-                            Command="{Binding SendRequestCommand}"
-                            CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
-                            Modifiers="Control" />
-                    </TextBox.InputBindings>
-                </TextBox>
-                <DockPanel>
+                <Border
+                    Margin="4"
+                    Background="{StaticResource MiddleBackgroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="1"
+                    CornerRadius="{StaticResource CommonCornerRadius}">
+                    <TextBox
+                        x:Name="PromptInputTextBox"
+                        Height="100"
+                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
+                        <TextBox.InputBindings>
+                            <KeyBinding
+                                Key="Enter"
+                                Command="{Binding SendRequestCommand}"
+                                CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
+                                Modifiers="Control" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </Border>
+
+                <DockPanel Margin="8,4">
                     <TextBlock Text="Context Length: " />
                     <TextBlock
                         Width="30"
@@ -227,6 +256,7 @@
 
                 <Button
                     Width="200"
+                    Height="{StaticResource ButtonHeight}"
                     Padding="5"
                     Command="{Binding SendRequestCommand}"
                     CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}">
@@ -239,7 +269,6 @@
             Grid.Row="0"
             Grid.RowSpan="4"
             Grid.Column="2"
-            Background="{StaticResource MiddleBackgroundBrush}"
             Visibility="{Binding ElementName=SidebarToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <Grid Margin="5">
@@ -255,6 +284,7 @@
 
                     <Button
                         Width="40"
+                        Height="{StaticResource ButtonHeight}"
                         Margin="5,0"
                         HorizontalAlignment="Right"
                         Command="{Binding BrowseHistoryCommand}"
@@ -270,6 +300,7 @@
 
                     <Button
                         Width="40"
+                        Height="{StaticResource ButtonHeight}"
                         HorizontalAlignment="Right"
                         Command="{Binding BrowseHistoryCommand}"
                         CommandParameter="-1"
@@ -283,47 +314,59 @@
                     </Button>
                 </DockPanel>
 
-                <TextBox
-                    Grid.Row="1"
-                    AcceptsReturn="True"
-                    Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
-                    TextWrapping="Wrap" />
-
                 <Border
-                    Grid.Row="2"
-                    Height="150"
-                    AllowDrop="True"
+                    Grid.Row="1"
                     Background="{StaticResource MiddleBackgroundBrush}"
-                    BorderBrush="{StaticResource CommonForegroundBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
                     BorderThickness="1"
-                    CornerRadius="3">
+                    CornerRadius="{StaticResource CommonCornerRadius}">
 
-                    <ListBox
-                        Background="Transparent"
-                        BorderThickness="0"
-                        ItemsSource="{Binding AttachedFiles}"
-                        SelectionMode="Extended">
-                        <b:Interaction.Behaviors>
-                            <behaviors:DropFilesBehavior />
-                            <behaviors:DeleteListItemBehavior />
-                        </b:Interaction.Behaviors>
-
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock
-                                        FontSize="{StaticResource CommonFontSize}"
-                                        Foreground="{StaticResource CommonForegroundBrush}"
-                                        Text="📄 " />
-                                    <TextBlock
-                                        FontSize="{StaticResource CommonFontSize}"
-                                        Foreground="{StaticResource CommonForegroundBrush}"
-                                        Text="{Binding FileName}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                    <TextBox
+                        AcceptsReturn="True"
+                        Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
+                        TextWrapping="Wrap" />
                 </Border>
+
+                <DockPanel Grid.Row="2" Margin="0,15,0,0">
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        DockPanel.Dock="Top"
+                        Text="Attached files Here..." />
+                    <Border
+                        Height="150"
+                        AllowDrop="True"
+                        Background="{StaticResource MiddleBackgroundBrush}"
+                        BorderBrush="{StaticResource BorderBrush}"
+                        BorderThickness="1"
+                        CornerRadius="{StaticResource CommonCornerRadius}">
+
+                        <ListBox
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ItemsSource="{Binding AttachedFiles}"
+                            SelectionMode="Extended">
+                            <b:Interaction.Behaviors>
+                                <behaviors:DropFilesBehavior />
+                                <behaviors:DeleteListItemBehavior />
+                            </b:Interaction.Behaviors>
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock
+                                            FontSize="{StaticResource CommonFontSize}"
+                                            Foreground="{StaticResource CommonForegroundBrush}"
+                                            Text="📄 " />
+                                        <TextBlock
+                                            FontSize="{StaticResource CommonFontSize}"
+                                            Foreground="{StaticResource CommonForegroundBrush}"
+                                            Text="{Binding FileName}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </Border>
+                </DockPanel>
 
             </Grid>
         </Border>
