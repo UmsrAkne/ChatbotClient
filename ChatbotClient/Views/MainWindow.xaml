@@ -63,6 +63,7 @@
         <Button
             Grid.Row="0"
             Grid.Column="0"
+            Height="{StaticResource ButtonHeight}"
             Command="{Binding AddSessionCommand}">
 
             <Button.Content>
@@ -70,31 +71,37 @@
             </Button.Content>
         </Button>
 
-        <ListBox
+        <Border
             Grid.Row="1"
             Grid.RowSpan="3"
             Grid.Column="0"
-            Width="200"
+            Margin="0,8,0,0"
             Background="{StaticResource MiddleBackgroundBrush}"
-            BorderThickness="0"
-            ItemsSource="{Binding Sessions}"
-            SelectedItem="{Binding CurrentSession}">
-            <b:Interaction.Triggers>
-                <b:EventTrigger EventName="SelectionChanged">
-                    <b:InvokeCommandAction Command="{Binding LoadSessionAsyncCommand}" />
-                </b:EventTrigger>
-            </b:Interaction.Triggers>
-            <ListBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:TalkSession}">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock
-                            FontSize="{StaticResource CommonFontSize}"
-                            Foreground="{StaticResource CommonForegroundBrush}"
-                            Text="{Binding Title}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+            CornerRadius="{StaticResource CommonCornerRadius}">
+
+            <ListBox
+                Width="200"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding Sessions}"
+                SelectedItem="{Binding CurrentSession}">
+                <b:Interaction.Triggers>
+                    <b:EventTrigger EventName="SelectionChanged">
+                        <b:InvokeCommandAction Command="{Binding LoadSessionAsyncCommand}" />
+                    </b:EventTrigger>
+                </b:Interaction.Triggers>
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:TalkSession}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock
+                                FontSize="{StaticResource CommonFontSize}"
+                                Foreground="{StaticResource CommonForegroundBrush}"
+                                Text="{Binding Title}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Border>
 
         <Border Grid.Row="0" Grid.Column="1">
             <ComboBox
@@ -201,7 +208,8 @@
                         </TextBox.InputBindings>
                     </TextBox>
                 </Border>
-                <DockPanel>
+
+                <DockPanel Margin="8,4">
                     <TextBlock Text="Context Length: " />
                     <TextBlock
                         Width="30"
@@ -237,6 +245,7 @@
 
                 <Button
                     Width="200"
+                    Height="{StaticResource ButtonHeight}"
                     Padding="5"
                     Command="{Binding SendRequestCommand}"
                     CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}">
@@ -264,6 +273,7 @@
 
                     <Button
                         Width="40"
+                        Height="{StaticResource ButtonHeight}"
                         Margin="5,0"
                         HorizontalAlignment="Right"
                         Command="{Binding BrowseHistoryCommand}"
@@ -279,6 +289,7 @@
 
                     <Button
                         Width="40"
+                        Height="{StaticResource ButtonHeight}"
                         HorizontalAlignment="Right"
                         Command="{Binding BrowseHistoryCommand}"
                         CommandParameter="-1"
