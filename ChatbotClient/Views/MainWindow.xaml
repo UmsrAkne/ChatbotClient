@@ -127,7 +127,7 @@
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="5">
+                        <Grid Margin="5,5">
                             <Grid.Resources>
 
                                 <Style TargetType="TextBlock">
@@ -142,7 +142,18 @@
                                 <ColumnDefinition Width="0.5*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Padding="10" CornerRadius="10">
+                            <Border Padding="5" CornerRadius="10">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Role}" Value="User">
+                                                <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />

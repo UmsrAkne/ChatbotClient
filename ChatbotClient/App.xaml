@@ -11,6 +11,8 @@
         <SolidColorBrush x:Key="CommonForegroundBrush" Color="#DDDDDD" />
         <SolidColorBrush x:Key="BorderBrush" Color="#999999" />
 
+        <SolidColorBrush x:Key="SpeechBubbleBackgroundBrush" Color="#48486A" />
+
         <system:Double x:Key="CommonFontSize">15</system:Double>
         <system:Double x:Key="ButtonHeight">30</system:Double>
 
