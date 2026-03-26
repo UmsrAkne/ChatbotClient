@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:behaviors="clr-namespace:ChatbotClient.Behaviors"
+    xmlns:controls="clr-namespace:ChatbotClient.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mdXaml="https://github.com/whistyun/MdXaml"
@@ -60,16 +61,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Button
+        <controls:CustomButton
             Grid.Row="0"
             Grid.Column="0"
-            Height="{StaticResource ButtonHeight}"
-            Command="{Binding AddSessionCommand}">
+            Padding="5"
+            ButtonCommand="{Binding AddSessionCommand}">
 
-            <Button.Content>
-                <TextBlock Foreground="Black" Text="New Chat Session" />
-            </Button.Content>
-        </Button>
+            <controls:CustomButton.ButtonContent>
+                <TextBlock HorizontalAlignment="Center" Text="New Chat Session" />
+            </controls:CustomButton.ButtonContent>
+        </controls:CustomButton>
 
         <Border
             Grid.Row="1"
@@ -254,14 +255,14 @@
                 <!-- </Button> -->
                 <!--  -->
 
-                <Button
+                <controls:CustomButton
                     Width="200"
-                    Height="{StaticResource ButtonHeight}"
                     Padding="5"
-                    Command="{Binding SendRequestCommand}"
-                    CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}">
-                    <TextBlock Foreground="Black" Text="Send (Ctrl + Enter)" />
-                </Button>
+                    ButtonCommand="{Binding SendRequestCommand}">
+                    <controls:CustomButton.ButtonContent>
+                        <TextBlock HorizontalAlignment="Center" Text="Send (Ctrl + Enter)" />
+                    </controls:CustomButton.ButtonContent>
+                </controls:CustomButton>
             </StackPanel>
         </Border>
 
@@ -282,36 +283,30 @@
                 <DockPanel Grid.Row="0">
                     <TextBlock Margin="0,0,0,5" Text="System Prompt Here..." />
 
-                    <Button
+                    <controls:CustomButton
                         Width="40"
                         Height="{StaticResource ButtonHeight}"
                         Margin="5,0"
                         HorizontalAlignment="Right"
-                        Command="{Binding BrowseHistoryCommand}"
-                        CommandParameter="1"
+                        ButtonCommand="{Binding BrowseHistoryCommand}"
+                        ButtonCommandParameter="1"
                         DockPanel.Dock="Right">
-                        <Button.Content>
-                            <TextBlock
-                                FontWeight="Bold"
-                                Foreground="Black"
-                                Text="→" />
-                        </Button.Content>
-                    </Button>
+                        <controls:CustomButton.ButtonContent>
+                            <TextBlock FontWeight="Bold" Text="→" />
+                        </controls:CustomButton.ButtonContent>
+                    </controls:CustomButton>
 
-                    <Button
+                    <controls:CustomButton
                         Width="40"
                         Height="{StaticResource ButtonHeight}"
                         HorizontalAlignment="Right"
-                        Command="{Binding BrowseHistoryCommand}"
-                        CommandParameter="-1"
+                        ButtonCommand="{Binding BrowseHistoryCommand}"
+                        ButtonCommandParameter="-1"
                         DockPanel.Dock="Right">
-                        <Button.Content>
-                            <TextBlock
-                                FontWeight="Bold"
-                                Foreground="Black"
-                                Text="←" />
-                        </Button.Content>
-                    </Button>
+                        <controls:CustomButton.ButtonContent>
+                            <TextBlock FontWeight="Bold" Text="←" />
+                        </controls:CustomButton.ButtonContent>
+                    </controls:CustomButton>
                 </DockPanel>
 
                 <Border
