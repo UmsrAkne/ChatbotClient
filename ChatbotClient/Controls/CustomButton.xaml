@@ -1,0 +1,59 @@
+﻿<UserControl
+    x:Class="ChatbotClient.Controls.CustomButton"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ChatbotClient.Controls"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Parent"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="CustomButtonTemplate" TargetType="Button">
+            <Border
+                x:Name="border"
+                Height="{StaticResource ButtonHeight}"
+                Background="{StaticResource MiddleBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1"
+                CornerRadius="{StaticResource CommonCornerRadius}">
+                <ContentPresenter
+                    x:Name="contentPresenter"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    TextBlock.FontSize="{StaticResource CommonFontSize}"
+                    TextBlock.Foreground="{StaticResource CommonForegroundBrush}" />
+            </Border>
+
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="border" Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
+                    <Setter TargetName="border" Property="BorderBrush" Value="{StaticResource CommonForegroundBrush}" />
+                </Trigger>
+
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="border" Property="Background" Value="#555577" />
+                    <Setter TargetName="border" Property="RenderTransform">
+                        <Setter.Value>
+                            <ScaleTransform ScaleX="0.98" ScaleY="0.98" />
+                        </Setter.Value>
+                    </Setter>
+                    <Setter TargetName="border" Property="RenderTransformOrigin" Value="0.5,0.5" />
+                </Trigger>
+
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="border" Property="Background" Value="{StaticResource DarkBackgroundBrush}" />
+                    <Setter TargetName="border" Property="BorderBrush" Value="#555555" />
+                    <Setter TargetName="contentPresenter" Property="Opacity" Value="0.4" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <Button
+        Command="{Binding ButtonCommand, ElementName=Parent}"
+        CommandParameter="{Binding ButtonCommandParameter, ElementName=Parent}"
+        Content="{Binding ButtonContent, ElementName=Parent}"
+        Template="{StaticResource CustomButtonTemplate}" />
+</UserControl>
