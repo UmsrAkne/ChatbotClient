@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using ChatbotClient.Models;
+using ChatbotClient.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatbotClient.Data
@@ -19,7 +20,7 @@ namespace ChatbotClient.Data
             {
                 var baseDir = AppContext.BaseDirectory;
                 var dbPath = Path.Combine(baseDir, "talk_history.db");
-                Console.WriteLine($"DB Path: {dbPath}");
+                Logger.Log($"DB Path: {dbPath}");
                 optionsBuilder.UseSqlite($"Data Source={dbPath}");
             }
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChatbotClient.Utils;
 using OpenAI.Chat;
 
 namespace ChatbotClient.Models
@@ -52,8 +53,8 @@ namespace ChatbotClient.Models
                 }
             }
 
-            Console.WriteLine($"Context length: {MessageLimit}");
-            Console.WriteLine($"History: {ordered.Count} entries");
+            Logger.Log($"Context length: {MessageLimit}");
+            Logger.Log($"History: {ordered.Count} entries");
 
             // 過去の TalkEntry → ChatMessage（role 変換）
             foreach (var h in ordered)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using ChatbotClient.Data;
+using ChatbotClient.Utils;
 using ChatbotClient.Views;
 using Prism.Ioc;
 
@@ -18,6 +19,9 @@ public partial class App
 
     protected override void RegisterTypes(IContainerRegistry containerRegistry)
     {
+        var path = AppContext.BaseDirectory;
+        Logger.Initialize(path);
+
         // --- データベース初期化セクション ---
         // 【事故メモ】
         // 以前、OnInitialized で EnsureCreated を呼んでいたが、以下の理由でエラー（No such table）が発生した：
@@ -28,8 +32,8 @@ public partial class App
         //
         // 【対策】
         // 最も確実な「実行順序」を担保するため、このメソッド内で型の登録と同時に物理的なテーブル作成を強制する。
-        Console.WriteLine("RegisterTypes");
-        Console.WriteLine("RegisterTypes: DB初期化開始");
+        Logger.Log("RegisterTypes");
+        Logger.Log("RegisterTypes: DB初期化開始");
 
         containerRegistry.Register<MyDbContext>();
 
@@ -44,7 +48,7 @@ public partial class App
 
     protected override void OnInitialized()
     {
-        Console.WriteLine("OnInitialized");
+        Logger.Log("OnInitialized");
         base.OnInitialized();
     }
 }

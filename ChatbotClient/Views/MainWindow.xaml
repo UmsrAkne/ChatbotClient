@@ -6,6 +6,7 @@
     xmlns:behaviors="clr-namespace:ChatbotClient.Behaviors"
     xmlns:controls="clr-namespace:ChatbotClient.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:mdXaml="https://github.com/whistyun/MdXaml"
     xmlns:models="clr-namespace:ChatbotClient.Models"
@@ -31,6 +32,11 @@
             <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
             <Setter Property="Margin" Value="4" />
             <Setter Property="BorderThickness" Value="0" />
+        </Style>
+
+        <Style TargetType="icon:PackIconMaterial">
+            <Setter Property="Foreground" Value="{StaticResource CommonForegroundBrush}" />
+            <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
     </Window.Resources>
 
@@ -68,7 +74,14 @@
             ButtonCommand="{Binding AddSessionCommand}">
 
             <controls:CustomButton.ButtonContent>
-                <TextBlock HorizontalAlignment="Center" Text="New Chat Session" />
+                <StackPanel Orientation="Horizontal">
+
+                    <TextBlock HorizontalAlignment="Center" Text="New Chat Session" />
+                    <icon:PackIconMaterial
+                        Margin="8,0,0,0"
+                        VerticalAlignment="Center"
+                        Kind="CommentPlus" />
+                </StackPanel>
             </controls:CustomButton.ButtonContent>
         </controls:CustomButton>
 
@@ -159,6 +172,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
@@ -190,6 +204,13 @@
                                             </Style>
                                         </mdXaml:MarkdownScrollViewer.MarkdownStyle>
                                     </mdXaml:MarkdownScrollViewer>
+
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock HorizontalAlignment="Right" Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </Grid>
@@ -256,11 +277,14 @@
                 <!--  -->
 
                 <controls:CustomButton
-                    Width="200"
+                    Width="100"
                     Padding="5"
-                    ButtonCommand="{Binding SendRequestCommand}">
+                    ButtonCommand="{Binding SendRequestCommand}"
+                    ToolTip="Send request (Ctrl + Enter)">
                     <controls:CustomButton.ButtonContent>
-                        <TextBlock HorizontalAlignment="Center" Text="Send (Ctrl + Enter)" />
+                        <StackPanel Orientation="Horizontal">
+                            <icon:PackIconMaterial Kind="Send" />
+                        </StackPanel>
                     </controls:CustomButton.ButtonContent>
                 </controls:CustomButton>
             </StackPanel>
@@ -292,7 +316,7 @@
                         ButtonCommandParameter="1"
                         DockPanel.Dock="Right">
                         <controls:CustomButton.ButtonContent>
-                            <TextBlock FontWeight="Bold" Text="→" />
+                            <icon:PackIconMaterial Kind="ArrowRight" />
                         </controls:CustomButton.ButtonContent>
                     </controls:CustomButton>
 
@@ -304,7 +328,7 @@
                         ButtonCommandParameter="-1"
                         DockPanel.Dock="Right">
                         <controls:CustomButton.ButtonContent>
-                            <TextBlock FontWeight="Bold" Text="←" />
+                            <icon:PackIconMaterial Kind="ArrowLeft" />
                         </controls:CustomButton.ButtonContent>
                     </controls:CustomButton>
                 </DockPanel>
