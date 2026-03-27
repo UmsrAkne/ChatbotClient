@@ -159,6 +159,7 @@
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition />
+                                        <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
@@ -190,6 +191,13 @@
                                             </Style>
                                         </mdXaml:MarkdownScrollViewer.MarkdownStyle>
                                     </mdXaml:MarkdownScrollViewer>
+
+                                    <StackPanel
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Right"
+                                        Orientation="Horizontal">
+                                        <TextBlock HorizontalAlignment="Right" Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
+                                    </StackPanel>
                                 </Grid>
                             </Border>
                         </Grid>
