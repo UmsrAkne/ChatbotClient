@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChatbotClient.Models;
+using ChatbotClient.Utils;
 using OpenAI;
 using OpenAI.Chat;
 
@@ -68,7 +69,7 @@ namespace ChatbotClient.Core
                         {
                             // ここでループを抜ければ、それ以降の通信（課金）は発生しません
                             finishReason = "Abnormal Repetition Detected"; // 独自理由をセット
-                            Console.WriteLine("!!! 異常な繰り返しを検知。緊急停止します。 !!!");
+                            Logger.Log("!!! 異常な繰り返しを検知。緊急停止します。 !!!");
                             goto EmergencyStop;
                         }
                     }
@@ -77,15 +78,15 @@ namespace ChatbotClient.Core
             catch (Exception ex)
             {
                 finishReason = "exception";
-                Console.WriteLine($"通信エラー: {ex.Message}");
+                Logger.Log($"通信エラー: {ex.Message}");
             }
 
             EmergencyStop:
             var text = fullResponse.ToString();
 
             // ログ出力
-            Console.WriteLine($"[Finish Reason]: {finishReason}");
-            Console.WriteLine($"[Final Output]: {text}");
+            Logger.Log($"[Finish Reason]: {finishReason}");
+            Logger.Log($"[Final Output]: {text}");
 
             string completionId = null;
             var sb = new StringBuilder();
@@ -103,7 +104,7 @@ namespace ChatbotClient.Core
                 // トークン使用量は「最後のパケット」にだけ入ってくる仕様
                 if (update.Usage != null)
                 {
-                    Console.WriteLine($"[Final Usage] Input: {update.Usage.InputTokenCount}, Output: {update.Usage.OutputTokenCount}");
+                    Logger.Log($"[Final Usage] Input: {update.Usage.InputTokenCount}, Output: {update.Usage.OutputTokenCount}");
                 }
             }
 

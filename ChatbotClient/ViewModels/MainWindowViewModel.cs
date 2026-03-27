@@ -104,7 +104,7 @@ public class MainWindowViewModel : BindableBase
 
     public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
     {
-        Console.WriteLine("コマンドが実行されました");
+        Logger.Log("コマンドが実行されました");
 
         // 1. まず自分の発言を UI (Talks) に追加
         var userEntry = new TalkEntry
@@ -167,13 +167,13 @@ public class MainWindowViewModel : BindableBase
                 Title = $"Session {DateTime.Now.ToShortTimeString()}",
             });
 
-            Console.WriteLine("Session added successfully.");
+            Logger.Log("Session added successfully.");
 
             await ReloadSessionsAsync(selectionId: newSession.Id);
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            Logger.Log(e.ToString());
             throw;
         }
     });
@@ -209,7 +209,7 @@ public class MainWindowViewModel : BindableBase
         if (CurrentSession == null)
         {
             // 基本的に CurrentSession は Null にならないはずだけどガードする。
-            Console.WriteLine("Warning: CurrentSession is null. Cannot register chat.");
+            Logger.Log("Warning: CurrentSession is null. Cannot register chat.");
             return;
         }
 
@@ -252,7 +252,7 @@ public class MainWindowViewModel : BindableBase
         catch (Exception ex)
         {
             // ここでようやくエラーが表面化する！
-            Console.WriteLine($"DB Error: {ex.Message}");
+            Logger.Log($"DB Error: {ex.Message}");
         }
     }
 
@@ -265,7 +265,7 @@ public class MainWindowViewModel : BindableBase
         var ss = await talkRepository.GetSessionsAsync();
         Sessions.Clear();
         Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
-        Console.WriteLine("Reload Sessions");
+        Logger.Log("Reload Sessions");
 
         if (selectionId >= 0)
         {
