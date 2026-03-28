@@ -406,11 +406,7 @@
                     IsChecked="True"
                     ToolTip="Edit System Prompt">
                     <ToggleButton.Content>
-                        <TextBlock
-                            Margin="0,0,0,6"
-                            FontWeight="Bold"
-                            Foreground="Black"
-                            Text="&gt;_" />
+                        <icon:PackIconMaterial Foreground="Black" Kind="ConsoleLine" />
                     </ToggleButton.Content>
                 </ToggleButton>
             </StackPanel>
