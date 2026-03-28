@@ -231,7 +231,10 @@
                     <TextBox
                         x:Name="PromptInputTextBox"
                         Height="100"
-                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}">
+                        AcceptsReturn="True"
+                        AcceptsTab="True"
+                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                        TextWrapping="Wrap">
                         <TextBox.InputBindings>
                             <KeyBinding
                                 Key="Enter"
