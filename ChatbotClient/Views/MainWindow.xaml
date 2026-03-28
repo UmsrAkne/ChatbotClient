@@ -284,10 +284,38 @@
                     Padding="5"
                     ButtonCommand="{Binding SendRequestCommand}"
                     ToolTip="Send request (Ctrl + Enter)">
+                    <!-- 本来は IsRunning をトリガーにするのがベストだが、エラーが出ず、トリガーも反応しなかったため IsEnabled を監視している。 -->
+                    <!-- 厳密に検証していないが、おそらく SendRequestCommand を都度 new しているのが原因の可能性がある。 -->
                     <controls:CustomButton.ButtonContent>
-                        <StackPanel Orientation="Horizontal">
-                            <icon:PackIconMaterial Kind="Send" />
-                        </StackPanel>
+                        <Grid>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="True">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <icon:PackIconMaterial Kind="Send" />
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <icon:PackIconMaterial Kind="Reload" Spin="True" />
+                            </StackPanel>
+                        </Grid>
                     </controls:CustomButton.ButtonContent>
                 </controls:CustomButton>
             </StackPanel>
