@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
@@ -93,6 +92,11 @@ public class MainWindowViewModel : BindableBase
 
         Talks.Clear();
         var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
+        foreach (var t in ts)
+        {
+            t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
+        }
+
         Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
     });
 
@@ -236,6 +240,8 @@ public class MainWindowViewModel : BindableBase
 
             // 前段の処理で最低一つは入っている前提なので First()
             CurrentSession ??= Sessions.First();
+
+            await LoadSessionAsyncCommand.ExecuteAsync(null);
 
             var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
             Talks.AddRange(ts);

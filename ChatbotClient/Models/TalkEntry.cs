@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows.Documents;
 
 namespace ChatbotClient.Models
 {
@@ -33,5 +35,8 @@ namespace ChatbotClient.Models
         public bool IsFavorite { get; set; }
 
         public string GenerationId { get; set; }
+
+        [NotMapped]
+        public FlowDocument DisplayDocument { get; set; }
     }
 }
