@@ -153,17 +153,19 @@
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="0.5*" />
                             </Grid.ColumnDefinitions>
 
                             <Border Padding="5" CornerRadius="10">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
+                                        <Setter Property="HorizontalAlignment" Value="Left" />
+                                        <Setter Property="Margin" Value="0,0,60,0" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Role}" Value="User">
                                                 <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
+                                                <Setter Property="HorizontalAlignment" Value="Right" />
+                                                <Setter Property="Margin" Value="30,0,0,0" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
