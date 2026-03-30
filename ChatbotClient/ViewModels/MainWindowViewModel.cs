@@ -116,6 +116,7 @@ public class MainWindowViewModel : BindableBase
             Content = text,
             Role = "User",
             Timestamp = DateTime.Now,
+            DisplayDocument = RichTextBoxHelper.ConvertMarkdown(text),
         };
 
         var systemPrompt = new SystemPromptEntry()
@@ -146,6 +147,7 @@ public class MainWindowViewModel : BindableBase
 
             // 3. 通信開始
             var result = await requestDispatcher.SendRequest(request);
+            result.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(result.Content);
 
             // 4. AIの返答を UI と DB に登録
             await RegisterChat(result);
