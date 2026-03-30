@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Documents;
 using Markdig;
 
@@ -26,7 +27,47 @@ namespace ChatbotClient.Utils
                 .Build();
 
             // Markdown文字列を FlowDocument に変換
-            return Markdig.Wpf.Markdown.ToFlowDocument(markdown, pipeline);
+            var doc = Markdig.Wpf.Markdown.ToFlowDocument(markdown, pipeline);
+
+            ForceApplyTheme(doc);
+            return doc;
+        }
+
+        private static void ForceApplyTheme(DependencyObject obj)
+        {
+            try
+            {
+                if (obj == null)
+                {
+                    return;
+                }
+
+                // 背景色とスタイルを持つ可能性のある全要素をチェック
+                if (obj is FrameworkContentElement fce)
+                {
+                    // 1. まず、要素に勝手に割り当てられた Style を消去
+                    fce.ClearValue(FrameworkContentElement.StyleProperty);
+
+                    // 2. その上で、個別に書き込まれた背景色があればそれも消す
+                    fce.ClearValue(TextElement.BackgroundProperty);
+                }
+
+                // 子要素を再帰的に走査（LogicalTreeを掘る）
+                foreach (var child in LogicalTreeHelper.GetChildren(obj))
+                {
+                    if (child is not DependencyObject d)
+                    {
+                        continue;
+                    }
+
+                    ForceApplyTheme(d);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.ToString());
+                throw;
+            }
         }
 
         private static void OnDocumentBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)

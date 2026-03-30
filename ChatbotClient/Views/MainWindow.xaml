@@ -188,7 +188,42 @@
                                         BorderThickness="0"
                                         FontSize="{StaticResource CommonFontSize}"
                                         Foreground="{StaticResource CommonForegroundBrush}"
-                                        IsReadOnly="True" />
+                                        IsReadOnly="True">
+                                        <emojiWpf:RichTextBox.Resources>
+
+                                            <Style TargetType="{x:Type FlowDocument}">
+                                                <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
+                                            </Style>
+
+                                            <Style TargetType="{x:Type Table}">
+                                                <Setter Property="Background" Value="#2D2D2D" />
+                                            </Style>
+                                            <Style TargetType="{x:Type TableCell}">
+                                                <Setter Property="Background" Value="#2D2D2D" />
+                                            </Style>
+
+                                            <Style TargetType="{x:Type Run}" />
+
+                                            <Style TargetType="{x:Type Paragraph}">
+                                                <Setter Property="Margin" Value="0,12,0,12" />
+                                            </Style>
+
+                                            <Style TargetType="{x:Type List}">
+                                                <Setter Property="Margin" Value="20,20,0,20" />
+                                                <Setter Property="Padding" Value="20,0,0,0" />
+                                            </Style>
+
+                                            <Style TargetType="{x:Type ListItem}">
+                                                <Setter Property="Margin" Value="0,4,0,4" />
+                                            </Style>
+
+                                            <Style TargetType="{x:Type Span}" />
+                                            <Style TargetType="{x:Type Section}" />
+                                            <Style TargetType="{x:Type InlineUIContainer}" />
+                                            <Style TargetType="{x:Type BlockUIContainer}" />
+                                            <Style TargetType="{x:Type Border}" />
+                                        </emojiWpf:RichTextBox.Resources>
+                                    </emojiWpf:RichTextBox>
 
                                     <StackPanel
                                         Grid.Row="2"
