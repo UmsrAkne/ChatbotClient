@@ -135,7 +135,7 @@
         </Border>
 
         <ScrollViewer Grid.Row="1" Grid.Column="1">
-            <ItemsControl ItemsSource="{Binding Talks}">
+            <ItemsControl HorizontalContentAlignment="Stretch" ItemsSource="{Binding Talks}">
                 <b:Interaction.Behaviors>
                     <behaviors:AutoScrollBehavior />
                 </b:Interaction.Behaviors>
@@ -155,7 +155,10 @@
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
 
-                            <Border Padding="5" CornerRadius="10">
+                            <Border
+                                Padding="5"
+                                HorizontalAlignment="Stretch"
+                                CornerRadius="10">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
@@ -164,8 +167,7 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding Role}" Value="User">
                                                 <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
-                                                <Setter Property="HorizontalAlignment" Value="Right" />
-                                                <Setter Property="Margin" Value="30,0,0,0" />
+                                                <Setter Property="Margin" Value="60,0,0,0" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -179,6 +181,15 @@
                                     </Grid.RowDefinitions>
 
                                     <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
+                                    <emojiWpf:TextBlock
+                                        x:Name="UserTextBlock"
+                                        Grid.Row="1"
+                                        Padding="8"
+                                        FontSize="{StaticResource CommonFontSize}"
+                                        Foreground="{StaticResource CommonForegroundBrush}"
+                                        Text="{Binding Content}"
+                                        Visibility="Collapsed" />
+
                                     <emojiWpf:RichTextBox
                                         x:Name="MyRichText"
                                         Grid.Row="1"
@@ -188,7 +199,8 @@
                                         BorderThickness="0"
                                         FontSize="{StaticResource CommonFontSize}"
                                         Foreground="{StaticResource CommonForegroundBrush}"
-                                        IsReadOnly="True">
+                                        IsReadOnly="True"
+                                        Visibility="Visible">
                                         <emojiWpf:RichTextBox.Resources>
 
                                             <Style TargetType="{x:Type FlowDocument}">
@@ -234,6 +246,14 @@
                                 </Grid>
                             </Border>
                         </Grid>
+
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Role}" Value="User">
+                                <Setter TargetName="MyRichText" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="UserTextBlock" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
