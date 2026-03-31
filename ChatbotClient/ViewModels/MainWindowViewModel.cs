@@ -237,9 +237,6 @@ public class MainWindowViewModel : BindableBase
 
             await LoadSessionAsyncCommand.ExecuteAsync(null);
 
-            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
-            Talks.AddRange(ts);
-
             CurrentSystemPrompt = new SystemPromptEntry
             {
                 PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
