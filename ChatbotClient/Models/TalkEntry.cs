@@ -1,11 +1,24 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Documents;
+using ChatbotClient.Utils;
 
 namespace ChatbotClient.Models
 {
     public class TalkEntry
     {
+        public TalkEntry()
+        {
+        }
+
+        public TalkEntry(string content, bool isUserTalk)
+            : this()
+        {
+            Content = content;
+            Role = isUserTalk ? "User" : "Assistant";
+            DisplayDocument = RichTextBoxHelper.ConvertMarkdown(content);
+        }
+
         public int Id { get; set; }
 
         public Guid Guid { get; set; } = Guid.NewGuid();

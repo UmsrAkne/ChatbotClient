@@ -108,11 +108,9 @@ namespace ChatbotClient.Core
                 }
             }
 
-            var entry = new TalkEntry()
+            var entry = new TalkEntry(text, false)
             {
                 GenerationId = completionId,
-                Content = text,
-                Role = "assistant",
             };
 
             return entry;

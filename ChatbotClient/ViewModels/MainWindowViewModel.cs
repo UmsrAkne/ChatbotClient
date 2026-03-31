@@ -111,14 +111,7 @@ public class MainWindowViewModel : BindableBase
         Logger.Log("コマンドが実行されました");
 
         // 1. まず自分の発言を UI (Talks) に追加
-        var userEntry = new TalkEntry
-        {
-            Content = text,
-            Role = "User",
-            Timestamp = DateTime.Now,
-            DisplayDocument = RichTextBoxHelper.ConvertMarkdown(text),
-        };
-
+        var userEntry = new TalkEntry(text, true);
         var systemPrompt = new SystemPromptEntry()
         {
             PromptText = SystemPromptFormatter.BuildSystemPrompt(CurrentSystemPrompt.PromptText, AttachedFiles.ToList()),
@@ -156,9 +149,8 @@ public class MainWindowViewModel : BindableBase
         {
             // 5. 異常系のハンドリング
             // 失敗したことを示す「システムメッセージ」を Talks に入れると親切
-            Talks.Add(new TalkEntry
+            Talks.Add(new TalkEntry($"エラーが発生しました: {e.Message}", false)
             {
-                Content = $"エラーが発生しました: {e.Message}",
                 Role = "System",
             });
         }
@@ -245,9 +237,6 @@ public class MainWindowViewModel : BindableBase
 
             await LoadSessionAsyncCommand.ExecuteAsync(null);
 
-            var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
-            Talks.AddRange(ts);
-
             CurrentSystemPrompt = new SystemPromptEntry
             {
                 PromptText = "あなたは親切で優秀なアシスタントです。回答は簡潔に日本語で行ってください。",
@@ -290,28 +279,16 @@ public class MainWindowViewModel : BindableBase
         Sessions.Add(new TalkSession() { Title = "Session 1", });
         Sessions.Add(new TalkSession() { Title = "Session 2", });
 
-        Talks.Add(new TalkEntry()
-        {
-            Role = "user",
-            Content = "Hello",
-        });
-
-        Talks.Add(new TalkEntry()
-        {
-            Role = "assistant",
-            Content = "Hello! How are you?",
-        });
+        Talks.Add(new TalkEntry("Hello", true));
+        Talks.Add(new TalkEntry("Hello! How are you?", false));
     }
 
     [Conditional("DEBUG")]
     private void AddDummyTalk()
     {
-        var dummyEntry = new TalkEntry
-        {
-            Content = $"これはデバッグ用のダミーメッセージです。時刻: {DateTime.Now:HH:mm:ss}\n長い文章のテストも兼ねています。あああああああああああああああああああああああ。",
-            Role = (Talks.Count % 2 == 0) ? "User" : "Assistant", // 交互にロールを変える
-            Timestamp = DateTime.Now,
-        };
+        var dummyEntry = new TalkEntry(
+            $"これはデバッグ用のダミーメッセージです。時刻: {DateTime.Now:HH:mm:ss}\n長い文章のテストも兼ねています。あああああああああああああああああああああああ。",
+            Talks.Count % 2 == 0);
 
         Talks.Add(dummyEntry);
     }
