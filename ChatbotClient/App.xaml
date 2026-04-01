@@ -13,7 +13,7 @@
 
         <SolidColorBrush x:Key="SpeechBubbleBackgroundBrush" Color="#48486A" />
 
-        <system:Double x:Key="CommonFontSize">15</system:Double>
+        <system:Double x:Key="CommonFontSize">17</system:Double>
         <system:Double x:Key="ButtonHeight">30</system:Double>
 
         <CornerRadius x:Key="CommonCornerRadius">5</CornerRadius>

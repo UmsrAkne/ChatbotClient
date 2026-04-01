@@ -188,6 +188,7 @@
                                         FontSize="{StaticResource CommonFontSize}"
                                         Foreground="{StaticResource CommonForegroundBrush}"
                                         Text="{Binding Content}"
+                                        TextWrapping="Wrap"
                                         Visibility="Collapsed" />
 
                                     <emojiWpf:RichTextBox

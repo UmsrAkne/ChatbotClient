@@ -48,6 +48,7 @@ namespace ChatbotClient.Utils
                     // Style を消去する前に、コードブロックっぽいかどうか判定する
                     var isCodeBlock = IsCodeElement(fce);
                     var currentFont = fce.GetValue(TextElement.FontFamilyProperty) as FontFamily;
+                    var originalFontSize = fce.GetValue(TextElement.FontSizeProperty);
 
                     // 1. 要素に勝手に割り当てられた Style を消去
                     fce.ClearValue(FrameworkContentElement.StyleProperty);
@@ -59,6 +60,11 @@ namespace ChatbotClient.Utils
                     if (isCodeBlock)
                     {
                         ApplyCodeBlockTheme(fce, currentFont);
+                    }
+
+                    if (originalFontSize != null)
+                    {
+                        fce.SetValue(TextElement.FontSizeProperty, originalFontSize);
                     }
                 }
 
