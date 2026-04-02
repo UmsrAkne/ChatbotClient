@@ -2,6 +2,7 @@
 {
     public enum AiModelType
     {
+        None,
         GeminiFlash,
         GeminiFlashLite,
         GemmaFree,

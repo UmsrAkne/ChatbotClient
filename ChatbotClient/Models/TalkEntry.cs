@@ -39,7 +39,7 @@ namespace ChatbotClient.Models
         // ナビゲーションプロパティ（多対1）
         public TalkSession TalkSession { get; set; }
 
-        public AiModelType AiModelType { get; set; }
+        public AiModelType AiModelType { get; set; } = AiModelType.None;
 
         public Guid? SystemPromptGuid { get; set; }
 
