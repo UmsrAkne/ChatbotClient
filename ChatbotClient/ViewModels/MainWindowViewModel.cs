@@ -141,6 +141,7 @@ public class MainWindowViewModel : BindableBase
             // 3. 通信開始
             var result = await requestDispatcher.SendRequest(request);
             result.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(result.Content);
+            result.AiModelType = CurrentModel;
 
             // 4. AIの返答を UI と DB に登録
             await RegisterChat(result);

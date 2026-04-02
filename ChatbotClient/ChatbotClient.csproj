@@ -13,6 +13,8 @@
         <PackageReference Include="MahApps.Metro.IconPacks" Version="6.2.1" />
         <PackageReference Include="Markdig" Version="1.1.2" />
         <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
+        <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
+        <PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
         <PackageReference Include="MdXaml" Version="2.0.0-pre202603081301" />
         <PackageReference Include="OpenAI" Version="2.9.1" />
         <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
