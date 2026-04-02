@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
@@ -92,12 +93,17 @@ public class MainWindowViewModel : BindableBase
 
         Talks.Clear();
         var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
-        foreach (var t in ts)
+        await Application.Current.Dispatcher.InvokeAsync(() =>
         {
-            t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
-        }
+            foreach (var t in ts)
+            {
+                // ここが重い場合、UIスレッドで動かすとフリーズの原因になります
+                t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
+            }
 
-        Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
+            var results = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
+            Talks.AddRange(results);
+        });
     });
 
     public DelegateCommand<object> BrowseHistoryCommand => new ((direction) =>
