@@ -208,13 +208,19 @@
         <Border Grid.Row="0" Grid.Column="1">
             <ComboBox
                 Width="200"
+                Padding="8,4"
                 HorizontalAlignment="Right"
+                Background="{StaticResource MiddleBackgroundBrush}"
+                BorderThickness="0"
+                FontSize="15"
+                Foreground="{StaticResource CommonForegroundBrush}"
                 ItemsSource="{Binding AvailableModels}"
                 SelectedItem="{Binding CurrentModel}">
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="Black" Text="{Binding}" />
+                            <TextBlock Text="{Binding}" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
