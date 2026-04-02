@@ -180,7 +180,7 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <TextBlock Grid.Row="0" Text="{Binding Role, StringFormat={}{0}:}" />
+                                    <TextBlock Grid.Row="0" Text="{Binding DisplayName, StringFormat={}{0}:}" />
                                     <emojiWpf:TextBlock
                                         x:Name="UserTextBlock"
                                         Grid.Row="1"
