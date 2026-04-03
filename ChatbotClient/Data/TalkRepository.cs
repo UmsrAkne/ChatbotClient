@@ -66,6 +66,18 @@ namespace ChatbotClient.Data
             return entry;
         }
 
+        public async Task UpdateSessionTitleAsync(Guid sessionGuid, string newTitle)
+        {
+            var session = await db.TalkSessions.FirstOrDefaultAsync(s => s.Guid == sessionGuid).ConfigureAwait(false);
+            if (session == null)
+            {
+                return;
+            }
+
+            session.Title = newTitle;
+            await db.SaveChangesAsync().ConfigureAwait(false);
+        }
+
         public async Task<SystemPromptEntry> GetOrAddSystemPromptEntryAsync(SystemPromptEntry entry)
         {
             var hash = SystemPromptEntry.NormalizeAndHash(entry.PromptText);

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
@@ -22,12 +23,13 @@ public class MainWindowViewModel : BindableBase
     private string inputText;
     private string responseText;
     private AiModelType currentModel;
-    private TalkSession currentSession;
     private int messageLimit = 10;
     private SystemPromptEntry currentSystemPrompt;
     private int currentHistoryIndex;
 
-    public MainWindowViewModel(ITalkRepository talkRepository)
+    public MainWindowViewModel(
+        SessionListBoxViewModel sessionListBoxViewModel,
+        ITalkRepository talkRepository)
     {
         AvailableModels = new ObservableCollection<AiModelType>()
         {
@@ -40,6 +42,7 @@ public class MainWindowViewModel : BindableBase
 
         CurrentModel = AvailableModels.First();
         this.talkRepository = talkRepository;
+        SessionListBoxViewModel = sessionListBoxViewModel;
 
         _ = InitializeAsync();
         DebugDummyData();
@@ -63,10 +66,6 @@ public class MainWindowViewModel : BindableBase
 
     public AiModelType CurrentModel { get => currentModel; set => SetProperty(ref currentModel, value); }
 
-    public ObservableCollection<TalkSession> Sessions { get; set; } = new ();
-
-    public TalkSession CurrentSession { get => currentSession; set => SetProperty(ref currentSession, value); }
-
     public SystemPromptEntry CurrentSystemPrompt
     {
         get => currentSystemPrompt;
@@ -83,21 +82,28 @@ public class MainWindowViewModel : BindableBase
         set => SetProperty(ref currentHistoryIndex, value);
     }
 
+    public SessionListBoxViewModel SessionListBoxViewModel { get; set; }
+
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
-        if (CurrentSession == null)
+        if (SessionListBoxViewModel.CurrentSession == null)
         {
             return;
         }
 
         Talks.Clear();
-        var ts = await talkRepository.GetEntriesBySessionIdAsync(CurrentSession.Guid);
-        foreach (var t in ts)
+        var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Guid);
+        await Application.Current.Dispatcher.InvokeAsync(() =>
         {
-            t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
-        }
+            foreach (var t in ts)
+            {
+                // ここが重い場合、UIスレッドで動かすとフリーズの原因になります
+                t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
+            }
 
-        Talks.AddRange(ts.OrderBy(t => t.Timestamp.ToLocalTime()));
+            var results = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
+            Talks.AddRange(results);
+        });
     });
 
     public DelegateCommand<object> BrowseHistoryCommand => new ((direction) =>
@@ -121,7 +127,7 @@ public class MainWindowViewModel : BindableBase
         userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
-        await talkRepository.AddEntryAsync(CurrentSession.Guid, userEntry);
+        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Guid, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
         InputText = string.Empty;
@@ -205,14 +211,14 @@ public class MainWindowViewModel : BindableBase
 
     private async Task RegisterChat(TalkEntry talkEntry)
     {
-        if (CurrentSession == null)
+        if (SessionListBoxViewModel.CurrentSession == null)
         {
             // 基本的に CurrentSession は Null にならないはずだけどガードする。
             Logger.Log("Warning: CurrentSession is null. Cannot register chat.");
             return;
         }
 
-        await talkRepository.AddEntryAsync(CurrentSession.Guid, talkEntry);
+        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Guid, talkEntry);
         Talks.Add(talkEntry);
     }
 
@@ -234,7 +240,7 @@ public class MainWindowViewModel : BindableBase
             await ReloadSessionsAsync();
 
             // 前段の処理で最低一つは入っている前提なので First()
-            CurrentSession ??= Sessions.First();
+            SessionListBoxViewModel.CurrentSession ??= SessionListBoxViewModel.Sessions.First();
 
             await LoadSessionAsyncCommand.ExecuteAsync(null);
 
@@ -261,13 +267,13 @@ public class MainWindowViewModel : BindableBase
     private async Task ReloadSessionsAsync(int selectionId = -1)
     {
         var ss = await talkRepository.GetSessionsAsync();
-        Sessions.Clear();
-        Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
+        SessionListBoxViewModel.Sessions.Clear();
+        SessionListBoxViewModel.Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
         Logger.Log("Reload Sessions");
 
         if (selectionId >= 0)
         {
-            CurrentSession = Sessions.FirstOrDefault(s => s.Id == selectionId);
+            SessionListBoxViewModel.CurrentSession = SessionListBoxViewModel.Sessions.FirstOrDefault(s => s.Id == selectionId);
         }
     }
 
@@ -277,8 +283,8 @@ public class MainWindowViewModel : BindableBase
         InputText = "Hello";
         ResponseText = "ここに応答が表示されます";
 
-        Sessions.Add(new TalkSession() { Title = "Session 1", });
-        Sessions.Add(new TalkSession() { Title = "Session 2", });
+        SessionListBoxViewModel.Sessions.Add(new TalkSession() { Title = "Session 1", });
+        SessionListBoxViewModel.Sessions.Add(new TalkSession() { Title = "Session 2", });
 
         Talks.Add(new TalkEntry("Hello", true));
         Talks.Add(new TalkEntry("Hello! How are you?", false));

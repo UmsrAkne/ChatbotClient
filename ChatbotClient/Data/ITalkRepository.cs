@@ -12,11 +12,16 @@ namespace ChatbotClient.Data
     {
         // Read
         Task<List<TalkSession>> GetSessionsAsync();
+
         Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionGuid);
 
         // Create
         Task<TalkSession> AddSessionAsync(TalkSession session);
+
         Task<TalkEntry> AddEntryAsync(Guid sessionGuid, TalkEntry entry);
+
+        // Update
+        Task UpdateSessionTitleAsync(Guid sessionGuid, string newTitle);
 
         // Delete
         Task DeleteSessionAsync(int sessionId);

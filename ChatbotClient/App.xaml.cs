@@ -2,6 +2,7 @@
 using System.Windows;
 using ChatbotClient.Data;
 using ChatbotClient.Utils;
+using ChatbotClient.ViewModels;
 using ChatbotClient.Views;
 using Prism.Ioc;
 
@@ -44,6 +45,7 @@ public partial class App
         }
 
         containerRegistry.Register<ITalkRepository, TalkRepository>();
+        containerRegistry.Register<SessionListBoxViewModel>();
     }
 
     protected override void OnInitialized()

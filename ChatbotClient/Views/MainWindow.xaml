@@ -13,6 +13,7 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:utils="clr-namespace:ChatbotClient.Utils"
     xmlns:viewModels="clr-namespace:ChatbotClient.ViewModels"
+    xmlns:views="clr-namespace:ChatbotClient.Views"
     Title="{Binding Title}"
     Width="1280"
     Height="768"
@@ -40,91 +41,6 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
-        <Style x:Key="SessionListBoxItemStyle" TargetType="ListBoxItem">
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderBrush" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="Padding" Value="10,4" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border
-                            x:Name="Bd"
-                            Margin="2,1"
-                            Padding="{TemplateBinding Padding}"
-                            Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
-                            CornerRadius="{StaticResource CommonCornerRadius}"
-                            SnapsToDevicePixels="true">
-                            <ContentPresenter
-                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-                                                Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                To="#1AFFFFFF"
-                                                Duration="0:0:0.2" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-                                                Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                To="Transparent"
-                                                Duration="0:0:0.2" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource CommonForegroundBrush}" />
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-                                                Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                To="#33FFFFFF"
-                                                Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <ColorAnimation
-                                                FillBehavior="Stop"
-                                                Storyboard.TargetName="Bd"
-                                                Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
-                                                To="Transparent"
-                                                Duration="0:0:0.1" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
-                            </Trigger>
-
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Opacity" Value="0.4" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
     <Grid Margin="5">
@@ -180,41 +96,25 @@
             Background="{StaticResource MiddleBackgroundBrush}"
             CornerRadius="{StaticResource CommonCornerRadius}">
 
-            <ListBox
-                Width="200"
-                Background="Transparent"
-                BorderThickness="0"
-                ItemContainerStyle="{StaticResource SessionListBoxItemStyle}"
-                ItemsSource="{Binding Sessions}"
-                SelectedItem="{Binding CurrentSession}">
-                <b:Interaction.Triggers>
-                    <b:EventTrigger EventName="SelectionChanged">
-                        <b:InvokeCommandAction Command="{Binding LoadSessionAsyncCommand}" />
-                    </b:EventTrigger>
-                </b:Interaction.Triggers>
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type models:TalkSession}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock
-                                FontSize="{StaticResource CommonFontSize}"
-                                Foreground="{StaticResource CommonForegroundBrush}"
-                                Text="{Binding Title}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <views:SessionListBox Width="200" DataContext="{Binding SessionListBoxViewModel}" />
         </Border>
 
         <Border Grid.Row="0" Grid.Column="1">
             <ComboBox
                 Width="200"
+                Padding="8,4"
                 HorizontalAlignment="Right"
+                Background="{StaticResource MiddleBackgroundBrush}"
+                BorderThickness="0"
+                FontSize="15"
+                Foreground="{StaticResource CommonForegroundBrush}"
                 ItemsSource="{Binding AvailableModels}"
                 SelectedItem="{Binding CurrentModel}">
+
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Foreground="Black" Text="{Binding}" />
+                            <TextBlock Text="{Binding}" />
                         </StackPanel>
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
