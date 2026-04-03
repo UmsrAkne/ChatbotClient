@@ -108,6 +108,12 @@
         ItemContainerStyle="{StaticResource SessionListBoxItemStyle}"
         ItemsSource="{Binding Sessions}"
         SelectedItem="{Binding CurrentSession}">
+        <ListBox.InputBindings>
+            <KeyBinding
+                Key="F2"
+                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.ToggleRenameModeCommand}"
+                CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.CurrentSession}" />
+        </ListBox.InputBindings>
         <b:Interaction.Triggers>
             <b:EventTrigger EventName="SelectionChanged">
                 <b:InvokeCommandAction Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=local:MainWindow}, Path=DataContext.LoadSessionAsyncCommand}" />
@@ -115,12 +121,35 @@
         </b:Interaction.Triggers>
         <ListBox.ItemTemplate>
             <DataTemplate DataType="{x:Type models:TalkSession}">
-                <StackPanel Orientation="Horizontal">
+                <Grid>
                     <TextBlock
+                        x:Name="DisplayBlock"
                         FontSize="{StaticResource CommonFontSize}"
                         Foreground="{StaticResource CommonForegroundBrush}"
-                        Text="{Binding Title}" />
-                </StackPanel>
+                        Text="{Binding Title}"
+                        Visibility="Visible" />
+
+                    <TextBox
+                        x:Name="EditBox"
+                        FontSize="{StaticResource CommonFontSize}"
+                        Foreground="{StaticResource CommonForegroundBrush}"
+                        Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                        Visibility="Collapsed">
+                        <TextBox.InputBindings>
+                            <KeyBinding
+                                Key="Enter"
+                                Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=ListBox}, Path=DataContext.ConfirmRenameCommand}"
+                                CommandParameter="{Binding}" />
+                        </TextBox.InputBindings>
+                    </TextBox>
+                </Grid>
+
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                        <Setter TargetName="DisplayBlock" Property="Visibility" Value="Collapsed" />
+                        <Setter TargetName="EditBox" Property="Visibility" Value="Visible" />
+                    </DataTrigger>
+                </DataTemplate.Triggers>
             </DataTemplate>
         </ListBox.ItemTemplate>
     </ListBox>

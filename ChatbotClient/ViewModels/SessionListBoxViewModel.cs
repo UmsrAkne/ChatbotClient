@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
+using Prism.Commands;
 using Prism.Mvvm;
 
 namespace ChatbotClient.ViewModels
@@ -19,5 +20,21 @@ namespace ChatbotClient.ViewModels
         public TalkSession CurrentSession { get => currentSession; set => SetProperty(ref currentSession, value); }
 
         public ObservableCollection<TalkSession> Sessions { get; set; } = new ();
+
+        public DelegateCommand<TalkSession> ToggleRenameModeCommand => new (target =>
+        {
+            foreach (var talkSession in Sessions)
+            {
+                talkSession.IsEditing = false;
+            }
+
+            target.IsEditing = true;
+        });
+
+        public DelegateCommand<TalkSession> ConfirmRenameCommand => new ((target) =>
+        {
+            target.IsEditing = false;
+            talkRepository.UpdateSessionTitleAsync(target.Guid, target.Title);
+        });
     }
 }
