@@ -27,7 +27,9 @@ public class MainWindowViewModel : BindableBase
     private SystemPromptEntry currentSystemPrompt;
     private int currentHistoryIndex;
 
-    public MainWindowViewModel(ITalkRepository talkRepository)
+    public MainWindowViewModel(
+        SessionListBoxViewModel sessionListBoxViewModel,
+        ITalkRepository talkRepository)
     {
         AvailableModels = new ObservableCollection<AiModelType>()
         {
@@ -40,6 +42,7 @@ public class MainWindowViewModel : BindableBase
 
         CurrentModel = AvailableModels.First();
         this.talkRepository = talkRepository;
+        SessionListBoxViewModel = sessionListBoxViewModel;
 
         _ = InitializeAsync();
         DebugDummyData();
@@ -79,7 +82,7 @@ public class MainWindowViewModel : BindableBase
         set => SetProperty(ref currentHistoryIndex, value);
     }
 
-    public SessionListBoxViewModel SessionListBoxViewModel { get; set; } = new ();
+    public SessionListBoxViewModel SessionListBoxViewModel { get; set; }
 
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
