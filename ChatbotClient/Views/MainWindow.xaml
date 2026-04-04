@@ -128,7 +128,7 @@
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollBehavior />
+                    <behaviors:AutoScrollBehavior IsEnabled="{Binding TalkListScrollEnabled}" />
                 </b:Interaction.Behaviors>
 
                 <ItemsControl.ItemTemplate>

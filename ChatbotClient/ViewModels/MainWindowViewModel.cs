@@ -26,6 +26,7 @@ public class MainWindowViewModel : BindableBase
     private int messageLimit = 10;
     private SystemPromptEntry currentSystemPrompt;
     private int currentHistoryIndex;
+    private bool talkListScrollEnabled;
 
     public MainWindowViewModel(
         SessionListBoxViewModel sessionListBoxViewModel,
@@ -92,15 +93,21 @@ public class MainWindowViewModel : BindableBase
         }
 
         var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Guid);
-        var ordered = ts.OrderBy(t => t.Timestamp.ToLocalTime());
+        var ordered = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
         await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
+            TalkListScrollEnabled = false;
             Talks.Clear();
-            await Task.Delay(100);
+            await Task.Delay(50);
 
-            foreach (var t in ordered)
+            for (var i = 0; i < ordered.Count; i++)
             {
-                Talks.Add(t);
+                if (i == ordered.Count - 1)
+                {
+                    TalkListScrollEnabled = true;
+                }
+
+                Talks.Add(ordered.ElementAt(i));
                 await Task.Delay(50);
             }
         });
@@ -189,6 +196,12 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
+
+    public bool TalkListScrollEnabled
+    {
+        get => talkListScrollEnabled;
+        set => SetProperty(ref talkListScrollEnabled, value);
+    }
 
     private List<SystemPromptEntry> PromptHistory { get; set; }
 
