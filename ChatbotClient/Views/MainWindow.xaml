@@ -122,21 +122,40 @@
         </Border>
 
         <ScrollViewer Grid.Row="1" Grid.Column="1">
-            <ItemsControl HorizontalContentAlignment="Stretch" ItemsSource="{Binding Talks}">
+            <ItemsControl
+                HorizontalContentAlignment="Stretch"
+                ItemsSource="{Binding Talks}"
+                VirtualizingStackPanel.IsVirtualizing="True"
+                VirtualizingStackPanel.VirtualizationMode="Recycling">
                 <b:Interaction.Behaviors>
                     <behaviors:AutoScrollBehavior />
                 </b:Interaction.Behaviors>
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Grid Margin="5,5">
+                        <Grid x:Name="ItemContainer" Margin="5,5">
                             <Grid.Resources>
+
+                                <Storyboard x:Key="FadeInStoryboard">
+                                    <DoubleAnimation
+                                        Storyboard.TargetName="ItemContainer"
+                                        Storyboard.TargetProperty="Opacity"
+                                        From="0.0"
+                                        To="1.0"
+                                        Duration="0:0:0.2" />
+                                </Storyboard>
 
                                 <Style TargetType="TextBlock">
                                     <Setter Property="Foreground" Value="{StaticResource CommonForegroundBrush}" />
                                     <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
                                 </Style>
                             </Grid.Resources>
+
+                            <Grid.Triggers>
+                                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                    <BeginStoryboard Storyboard="{StaticResource FadeInStoryboard}" />
+                                </EventTrigger>
+                            </Grid.Triggers>
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />

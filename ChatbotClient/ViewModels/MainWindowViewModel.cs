@@ -91,18 +91,18 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        Talks.Clear();
         var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Guid);
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        var ordered = ts.OrderBy(t => t.Timestamp.ToLocalTime());
+        await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
-            foreach (var t in ts)
-            {
-                // ここが重い場合、UIスレッドで動かすとフリーズの原因になります
-                t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
-            }
+            Talks.Clear();
+            await Task.Delay(100);
 
-            var results = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
-            Talks.AddRange(results);
+            foreach (var t in ordered)
+            {
+                Talks.Add(t);
+                await Task.Delay(50);
+            }
         });
     });
 
