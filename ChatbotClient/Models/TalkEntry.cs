@@ -7,6 +7,8 @@ namespace ChatbotClient.Models
 {
     public class TalkEntry
     {
+        private FlowDocument displayDocument;
+
         public TalkEntry()
         {
         }
@@ -50,7 +52,20 @@ namespace ChatbotClient.Models
         public string GenerationId { get; set; }
 
         [NotMapped]
-        public FlowDocument DisplayDocument { get; set; }
+        public FlowDocument DisplayDocument
+        {
+            get
+            {
+                // 参照されたときだけ生成する。
+                if (displayDocument == null && !string.IsNullOrEmpty(Content))
+                {
+                    displayDocument = RichTextBoxHelper.ConvertMarkdown(Content);
+                }
+
+                return displayDocument;
+            }
+            set => displayDocument = value;
+        }
 
         [NotMapped]
         public string DisplayName => AiModelType == AiModelType.None ? Role : AiModelType.ToString();

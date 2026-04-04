@@ -26,6 +26,7 @@ public class MainWindowViewModel : BindableBase
     private int messageLimit = 10;
     private SystemPromptEntry currentSystemPrompt;
     private int currentHistoryIndex;
+    private bool talkListScrollEnabled;
 
     public MainWindowViewModel(
         SessionListBoxViewModel sessionListBoxViewModel,
@@ -91,18 +92,24 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        Talks.Clear();
         var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Guid);
-        await Application.Current.Dispatcher.InvokeAsync(() =>
+        var ordered = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
+        await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
-            foreach (var t in ts)
-            {
-                // ここが重い場合、UIスレッドで動かすとフリーズの原因になります
-                t.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(t.Content);
-            }
+            TalkListScrollEnabled = false;
+            Talks.Clear();
+            await Task.Delay(50);
 
-            var results = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
-            Talks.AddRange(results);
+            for (var i = 0; i < ordered.Count; i++)
+            {
+                if (i == ordered.Count - 1)
+                {
+                    TalkListScrollEnabled = true;
+                }
+
+                Talks.Add(ordered.ElementAt(i));
+                await Task.Delay(50);
+            }
         });
     });
 
@@ -189,6 +196,12 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
+
+    public bool TalkListScrollEnabled
+    {
+        get => talkListScrollEnabled;
+        set => SetProperty(ref talkListScrollEnabled, value);
+    }
 
     private List<SystemPromptEntry> PromptHistory { get; set; }
 

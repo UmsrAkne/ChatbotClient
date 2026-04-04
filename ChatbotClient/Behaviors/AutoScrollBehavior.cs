@@ -8,6 +8,16 @@ namespace ChatbotClient.Behaviors
 {
     public class AutoScrollBehavior : Behavior<ItemsControl>
     {
+        // スクロールを許可するかどうかの依存関係プロパティ
+        public readonly static DependencyProperty IsEnabledProperty =
+            DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(AutoScrollBehavior), new PropertyMetadata(true));
+
+        public bool IsEnabled
+        {
+            get => (bool)GetValue(IsEnabledProperty);
+            set => SetValue(IsEnabledProperty, value);
+        }
+
         protected override void OnAttached()
         {
             base.OnAttached();
@@ -48,7 +58,7 @@ namespace ChatbotClient.Behaviors
 
         private void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Add)
+            if (e.Action == NotifyCollectionChangedAction.Add && IsEnabled)
             {
                 ScrollToBottom();
             }
