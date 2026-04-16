@@ -254,11 +254,25 @@
                                             <Button
                                                 Width="40"
                                                 Height="40"
-                                                Command="{Binding CopyToClipboardCommand}"
-                                                Style="{StaticResource MaterialDesignIconButton}">
-                                                <Button.Content>
-                                                    <icon:PackIconMaterial Kind="Clipboard" />
-                                                </Button.Content>
+                                                Command="{Binding CopyToClipboardAsyncCommand}">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
+                                                        <Setter Property="Content">
+                                                            <Setter.Value>
+                                                                <icon:PackIconMaterial Kind="Clipboard" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding NowCopy}" Value="True">
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <icon:PackIconMaterial Kind="CheckBold" />
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
                                             </Button>
                                         </StackPanel>
                                     </StackPanel>
