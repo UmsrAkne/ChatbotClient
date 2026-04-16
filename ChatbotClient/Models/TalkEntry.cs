@@ -1,7 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Windows;
 using System.Windows.Documents;
 using ChatbotClient.Utils;
+using Prism.Commands;
 
 namespace ChatbotClient.Models
 {
@@ -69,5 +71,11 @@ namespace ChatbotClient.Models
 
         [NotMapped]
         public string DisplayName => AiModelType == AiModelType.None ? Role : AiModelType.ToString();
+
+        [NotMapped]
+        public DelegateCommand CopyToClipboardCommand => new (() =>
+        {
+            Clipboard.SetText(Content);
+        });
     }
 }
