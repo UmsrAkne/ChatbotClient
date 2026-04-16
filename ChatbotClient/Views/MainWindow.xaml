@@ -244,11 +244,37 @@
                                         </emojiWpf:RichTextBox.Resources>
                                     </emojiWpf:RichTextBox>
 
-                                    <StackPanel
-                                        Grid.Row="2"
-                                        HorizontalAlignment="Right"
-                                        Orientation="Horizontal">
-                                        <TextBlock HorizontalAlignment="Right" Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
+                                    <StackPanel Grid.Row="2" HorizontalAlignment="Right">
+                                        <TextBlock
+                                            Margin="0,0,0,5"
+                                            HorizontalAlignment="Right"
+                                            Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
+
+                                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                            <Button
+                                                Width="40"
+                                                Height="40"
+                                                Command="{Binding CopyToClipboardAsyncCommand}">
+                                                <Button.Style>
+                                                    <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
+                                                        <Setter Property="Content">
+                                                            <Setter.Value>
+                                                                <icon:PackIconMaterial Kind="Clipboard" />
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding NowCopy}" Value="True">
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <icon:PackIconMaterial Kind="CheckBold" />
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </StackPanel>
                                     </StackPanel>
                                 </Grid>
                             </Border>

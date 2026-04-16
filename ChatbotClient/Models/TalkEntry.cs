@@ -1,13 +1,20 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using ChatbotClient.Utils;
+using CommunityToolkit.Mvvm.Input;
+using Prism.Commands;
+using Prism.Mvvm;
 
 namespace ChatbotClient.Models
 {
-    public class TalkEntry
+    public class TalkEntry : BindableBase
     {
         private FlowDocument displayDocument;
+        private AsyncRelayCommand copyToClipboardCommand;
+        private bool nowCopy;
 
         public TalkEntry()
         {
@@ -69,5 +76,30 @@ namespace ChatbotClient.Models
 
         [NotMapped]
         public string DisplayName => AiModelType == AiModelType.None ? Role : AiModelType.ToString();
+
+        [NotMapped]
+        public bool NowCopy { get => nowCopy; set => SetProperty(ref nowCopy, value); }
+
+        [NotMapped]
+        public AsyncRelayCommand CopyToClipboardAsyncCommand =>
+        copyToClipboardCommand ??= new AsyncRelayCommand(async () =>
+        {
+            try
+            {
+                Clipboard.SetText(Content ?? string.Empty);
+                NowCopy = true;
+
+                // 数秒後にチェックマークを元に戻す
+                await Task.Delay(3000);
+            }
+            catch (Exception ex)
+            {
+                Logger.Log($"Copy to clipboard failed: {ex.Message}");
+            }
+            finally
+            {
+                NowCopy = false;
+            }
+        });
     }
 }
