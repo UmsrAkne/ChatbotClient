@@ -14,6 +14,8 @@ namespace ChatbotClient.Data
 
         public DbSet<SystemPromptEntry> SystemPrompts { get; set; } = null!;
 
+        public DbSet<SessionFolder> SessionFolders { get; set; } = null!;
+
         public DbSet<AiModel> AiModels { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

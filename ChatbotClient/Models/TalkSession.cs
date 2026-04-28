@@ -21,6 +21,11 @@ namespace ChatbotClient.Models
         // 1対多のナビゲーションプロパティ
         public ICollection<TalkEntry> Entries { get; set; } = new List<TalkEntry>();
 
+        public Guid? ParentFolderId { get; set; }
+
+        [ForeignKey(nameof(ParentFolderId))]
+        public SessionFolder ParentFolder { get; set; }
+
         [NotMapped]
         public bool IsEditing { get => isEditing; set => SetProperty(ref isEditing, value); }
     }
