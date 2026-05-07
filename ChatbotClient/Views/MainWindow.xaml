@@ -43,476 +43,479 @@
 
     </Window.Resources>
 
-    <Grid Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition x:Name="EditorColumn">
-                <ColumnDefinition.Style>
-                    <Style x:Name="EditorColumnStyle" TargetType="ColumnDefinition">
-                        <Setter Property="Width" Value="0" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=SidebarToggle, Path=IsChecked}" Value="True">
-                                <Setter Property="Width" Value="300" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ColumnDefinition.Style>
-            </ColumnDefinition>
-
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-
-        <controls:CustomButton
-            Grid.Row="0"
-            Grid.Column="0"
-            Padding="5"
-            ButtonCommand="{Binding AddSessionCommand}">
-
-            <controls:CustomButton.ButtonContent>
-                <StackPanel Orientation="Horizontal">
-
-                    <TextBlock HorizontalAlignment="Center" Text="New Chat Session" />
-                    <icon:PackIconMaterial
-                        Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        Kind="CommentPlus" />
-                </StackPanel>
-            </controls:CustomButton.ButtonContent>
-        </controls:CustomButton>
-
-        <Border
-            Grid.Row="1"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Margin="0,8,0,0"
-            Background="{StaticResource MiddleBackgroundBrush}"
-            CornerRadius="{StaticResource CommonCornerRadius}">
-
-            <views:SessionListBox Width="200" DataContext="{Binding SessionListBoxViewModel}" />
-        </Border>
-
-        <Border Grid.Row="0" Grid.Column="1">
-            <ComboBox
-                Width="200"
-                Padding="8,4"
-                HorizontalAlignment="Right"
-                Background="{StaticResource MiddleBackgroundBrush}"
-                BorderThickness="0"
-                FontSize="15"
-                Foreground="{StaticResource CommonForegroundBrush}"
-                ItemsSource="{Binding AvailableModels}"
-                SelectedItem="{Binding CurrentModel}">
-
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-        </Border>
-
-        <ScrollViewer Grid.Row="1" Grid.Column="1">
-            <ItemsControl
-                HorizontalContentAlignment="Stretch"
-                ItemsSource="{Binding Talks}"
-                VirtualizingStackPanel.IsVirtualizing="True"
-                VirtualizingStackPanel.VirtualizationMode="Recycling">
-                <b:Interaction.Behaviors>
-                    <behaviors:AutoScrollBehavior IsEnabled="{Binding TalkListScrollEnabled}" />
-                </b:Interaction.Behaviors>
-
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid x:Name="ItemContainer" Margin="5,5">
-                            <Grid.Resources>
-
-                                <Storyboard x:Key="FadeInStoryboard">
-                                    <DoubleAnimation
-                                        Storyboard.TargetName="ItemContainer"
-                                        Storyboard.TargetProperty="Opacity"
-                                        From="0.0"
-                                        To="1.0"
-                                        Duration="0:0:0.2" />
-                                </Storyboard>
-
-                                <Style TargetType="TextBlock">
-                                    <Setter Property="Foreground" Value="{StaticResource CommonForegroundBrush}" />
-                                    <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
-                                </Style>
-                            </Grid.Resources>
-
-                            <Grid.Triggers>
-                                <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                                    <BeginStoryboard Storyboard="{StaticResource FadeInStoryboard}" />
-                                </EventTrigger>
-                            </Grid.Triggers>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-
-                            <Border
-                                Padding="5"
-                                HorizontalAlignment="Stretch"
-                                CornerRadius="10">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
-                                        <Setter Property="HorizontalAlignment" Value="Left" />
-                                        <Setter Property="Margin" Value="0,0,60,0" />
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding Role}" Value="User">
-                                                <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
-                                                <Setter Property="Margin" Value="60,0,0,0" />
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <TextBlock Grid.Row="0" Text="{Binding DisplayName, StringFormat={}{0}:}" />
-                                    <emojiWpf:TextBlock
-                                        x:Name="UserTextBlock"
-                                        Grid.Row="1"
-                                        Padding="8"
-                                        FontSize="{StaticResource CommonFontSize}"
-                                        Foreground="{StaticResource CommonForegroundBrush}"
-                                        Text="{Binding Content}"
-                                        TextWrapping="Wrap"
-                                        Visibility="Collapsed" />
-
-                                    <emojiWpf:RichTextBox
-                                        x:Name="MyRichText"
-                                        Grid.Row="1"
-                                        Padding="8"
-                                        utils:RichTextBoxHelper.DocumentBinding="{Binding DisplayDocument}"
-                                        Background="Transparent"
-                                        BorderThickness="0"
-                                        FontSize="{StaticResource CommonFontSize}"
-                                        Foreground="{StaticResource CommonForegroundBrush}"
-                                        IsReadOnly="True"
-                                        Visibility="Visible">
-                                        <emojiWpf:RichTextBox.Resources>
-
-                                            <Style TargetType="{x:Type FlowDocument}">
-                                                <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
-                                            </Style>
-
-                                            <Style TargetType="{x:Type Table}">
-                                                <Setter Property="Background" Value="#2D2D2D" />
-                                            </Style>
-                                            <Style TargetType="{x:Type TableCell}">
-                                                <Setter Property="Background" Value="#2D2D2D" />
-                                            </Style>
-
-                                            <Style TargetType="{x:Type Run}" />
-
-                                            <Style TargetType="{x:Type Paragraph}">
-                                                <Setter Property="Margin" Value="0,12,0,12" />
-                                            </Style>
-
-                                            <Style TargetType="{x:Type List}">
-                                                <Setter Property="Margin" Value="20,20,0,20" />
-                                                <Setter Property="Padding" Value="20,0,0,0" />
-                                            </Style>
-
-                                            <Style TargetType="{x:Type ListItem}">
-                                                <Setter Property="Margin" Value="0,4,0,4" />
-                                            </Style>
-
-                                            <Style TargetType="{x:Type Span}" />
-                                            <Style TargetType="{x:Type Section}" />
-                                            <Style TargetType="{x:Type InlineUIContainer}" />
-                                            <Style TargetType="{x:Type BlockUIContainer}" />
-                                            <Style TargetType="{x:Type Border}" />
-                                        </emojiWpf:RichTextBox.Resources>
-                                    </emojiWpf:RichTextBox>
-
-                                    <StackPanel Grid.Row="2" HorizontalAlignment="Right">
-                                        <TextBlock
-                                            Margin="0,0,0,5"
-                                            HorizontalAlignment="Right"
-                                            Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
-
-                                        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                            <Button
-                                                Width="40"
-                                                Height="40"
-                                                Command="{Binding CopyToClipboardAsyncCommand}">
-                                                <Button.Style>
-                                                    <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
-                                                        <Setter Property="Content">
-                                                            <Setter.Value>
-                                                                <icon:PackIconMaterial Kind="Clipboard" />
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding NowCopy}" Value="True">
-                                                                <Setter Property="Content">
-                                                                    <Setter.Value>
-                                                                        <icon:PackIconMaterial Kind="CheckBold" />
-                                                                    </Setter.Value>
-                                                                </Setter>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Button.Style>
-                                            </Button>
-                                        </StackPanel>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-                        </Grid>
-
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Role}" Value="User">
-                                <Setter TargetName="MyRichText" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="UserTextBlock" Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
-
-        <Border Grid.Row="2" Grid.Column="1">
-
-            <StackPanel>
-                <Border
-                    Margin="4"
-                    Background="{StaticResource MiddleBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
-                    CornerRadius="{StaticResource CommonCornerRadius}">
-                    <TextBox
-                        x:Name="PromptInputTextBox"
-                        Height="100"
-                        AcceptsReturn="True"
-                        AcceptsTab="True"
-                        Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
-                        TextWrapping="Wrap">
-                        <TextBox.InputBindings>
-                            <KeyBinding
-                                Key="Enter"
-                                Command="{Binding SendRequestCommand}"
-                                CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
-                                Modifiers="Control" />
-                        </TextBox.InputBindings>
-                    </TextBox>
-                </Border>
-
-                <DockPanel Margin="8,4">
-                    <TextBlock Text="Context Length: " />
-                    <TextBlock
-                        Width="30"
-                        FontWeight="Bold"
-                        Text="{Binding MessageLimit}"
-                        TextAlignment="Right" />
-
-                    <Slider
-                        Margin="10,0"
-                        IsSnapToTickEnabled="True"
-                        Maximum="50"
-                        Minimum="0"
-                        TickFrequency="1"
-                        Value="{Binding MessageLimit}" />
-                </DockPanel>
-            </StackPanel>
-        </Border>
-
-        <Border
-            Grid.Row="3"
-            Grid.Column="1"
-            Margin="0,10,0,0">
-            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                <!--  -->
-                <!-- <Button -->
-                <!-- Width="200" -->
-                <!-- Padding="5" -->
-                <!-- HorizontalAlignment="Right" -->
-                <!-- Command="{Binding AddDummyTalkCommand}"> -->
-                <!--     <TextBlock Foreground="Black" Text="Add Dummy" /> -->
-                <!-- </Button> -->
-                <!--  -->
-
-                <controls:CustomButton
-                    Width="100"
-                    Padding="5"
-                    ButtonCommand="{Binding SendRequestCommand}"
-                    ToolTip="Send request (Ctrl + Enter)">
-                    <!-- 本来は IsRunning をトリガーにするのがベストだが、エラーが出ず、トリガーも反応しなかったため IsEnabled を監視している。 -->
-                    <!-- 厳密に検証していないが、おそらく SendRequestCommand を都度 new しているのが原因の可能性がある。 -->
-                    <controls:CustomButton.ButtonContent>
-                        <Grid>
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="True">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
-                                <icon:PackIconMaterial Kind="Send" />
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal">
-                                <StackPanel.Style>
-                                    <Style TargetType="StackPanel">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <Trigger Property="IsEnabled" Value="False">
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
-                                <icon:PackIconMaterial Kind="Reload" Spin="True" />
-                            </StackPanel>
-                        </Grid>
-                    </controls:CustomButton.ButtonContent>
-                </controls:CustomButton>
-            </StackPanel>
-        </Border>
-
-        <Border
-            Grid.Row="0"
-            Grid.RowSpan="4"
-            Grid.Column="2"
-            Visibility="{Binding ElementName=SidebarToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
-
+    <TabControl>
+        <TabItem Header="Chat">
             <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                    <ColumnDefinition x:Name="EditorColumn">
+                        <ColumnDefinition.Style>
+                            <Style x:Name="EditorColumnStyle" TargetType="ColumnDefinition">
+                                <Setter Property="Width" Value="0" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ElementName=SidebarToggle, Path=IsChecked}" Value="True">
+                                        <Setter Property="Width" Value="300" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ColumnDefinition.Style>
+                    </ColumnDefinition>
+
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
+                <controls:CustomButton
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Padding="5"
+                    ButtonCommand="{Binding AddSessionCommand}">
 
-                <DockPanel Grid.Row="0">
-                    <TextBlock Margin="0,0,0,5" Text="System Prompt Here..." />
+                    <controls:CustomButton.ButtonContent>
+                        <StackPanel Orientation="Horizontal">
 
-                    <controls:CustomButton
-                        Width="40"
-                        Height="{StaticResource ButtonHeight}"
-                        Margin="5,0"
-                        HorizontalAlignment="Right"
-                        ButtonCommand="{Binding BrowseHistoryCommand}"
-                        ButtonCommandParameter="1"
-                        DockPanel.Dock="Right">
-                        <controls:CustomButton.ButtonContent>
-                            <icon:PackIconMaterial Kind="ArrowRight" />
-                        </controls:CustomButton.ButtonContent>
-                    </controls:CustomButton>
-
-                    <controls:CustomButton
-                        Width="40"
-                        Height="{StaticResource ButtonHeight}"
-                        HorizontalAlignment="Right"
-                        ButtonCommand="{Binding BrowseHistoryCommand}"
-                        ButtonCommandParameter="-1"
-                        DockPanel.Dock="Right">
-                        <controls:CustomButton.ButtonContent>
-                            <icon:PackIconMaterial Kind="ArrowLeft" />
-                        </controls:CustomButton.ButtonContent>
-                    </controls:CustomButton>
-                </DockPanel>
+                            <TextBlock HorizontalAlignment="Center" Text="New Chat Session" />
+                            <icon:PackIconMaterial
+                                Margin="8,0,0,0"
+                                VerticalAlignment="Center"
+                                Kind="CommentPlus" />
+                        </StackPanel>
+                    </controls:CustomButton.ButtonContent>
+                </controls:CustomButton>
 
                 <Border
                     Grid.Row="1"
+                    Grid.RowSpan="3"
+                    Grid.Column="0"
+                    Margin="0,8,0,0"
                     Background="{StaticResource MiddleBackgroundBrush}"
-                    BorderBrush="{StaticResource BorderBrush}"
-                    BorderThickness="1"
                     CornerRadius="{StaticResource CommonCornerRadius}">
 
-                    <TextBox
-                        AcceptsReturn="True"
-                        Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap" />
+                    <views:SessionListBox Width="200" DataContext="{Binding SessionListBoxViewModel}" />
                 </Border>
 
-                <DockPanel Grid.Row="2" Margin="0,15,0,0">
-                    <TextBlock
-                        Margin="0,0,0,5"
-                        DockPanel.Dock="Top"
-                        Text="Attached files Here..." />
-                    <Border
-                        Height="150"
-                        AllowDrop="True"
+                <Border Grid.Row="0" Grid.Column="1">
+                    <ComboBox
+                        Width="200"
+                        Padding="8,4"
+                        HorizontalAlignment="Right"
                         Background="{StaticResource MiddleBackgroundBrush}"
-                        BorderBrush="{StaticResource BorderBrush}"
-                        BorderThickness="1"
-                        CornerRadius="{StaticResource CommonCornerRadius}">
+                        BorderThickness="0"
+                        FontSize="15"
+                        Foreground="{StaticResource CommonForegroundBrush}"
+                        ItemsSource="{Binding AvailableModels}"
+                        SelectedItem="{Binding CurrentModel}">
 
-                        <ListBox
-                            Background="Transparent"
-                            BorderThickness="0"
-                            ItemsSource="{Binding AttachedFiles}"
-                            SelectionMode="Extended">
-                            <b:Interaction.Behaviors>
-                                <behaviors:DropFilesBehavior />
-                                <behaviors:DeleteListItemBehavior />
-                            </b:Interaction.Behaviors>
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Border>
 
-                            <ListBox.ItemTemplate>
-                                <DataTemplate>
+                <ScrollViewer Grid.Row="1" Grid.Column="1">
+                    <ItemsControl
+                        HorizontalContentAlignment="Stretch"
+                        ItemsSource="{Binding Talks}"
+                        VirtualizingStackPanel.IsVirtualizing="True"
+                        VirtualizingStackPanel.VirtualizationMode="Recycling">
+                        <b:Interaction.Behaviors>
+                            <behaviors:AutoScrollBehavior IsEnabled="{Binding TalkListScrollEnabled}" />
+                        </b:Interaction.Behaviors>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid x:Name="ItemContainer" Margin="5,5">
+                                    <Grid.Resources>
+
+                                        <Storyboard x:Key="FadeInStoryboard">
+                                            <DoubleAnimation
+                                                Storyboard.TargetName="ItemContainer"
+                                                Storyboard.TargetProperty="Opacity"
+                                                From="0.0"
+                                                To="1.0"
+                                                Duration="0:0:0.2" />
+                                        </Storyboard>
+
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{StaticResource CommonForegroundBrush}" />
+                                            <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
+                                        </Style>
+                                    </Grid.Resources>
+
+                                    <Grid.Triggers>
+                                        <EventTrigger RoutedEvent="FrameworkElement.Loaded">
+                                            <BeginStoryboard Storyboard="{StaticResource FadeInStoryboard}" />
+                                        </EventTrigger>
+                                    </Grid.Triggers>
+
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border
+                                        Padding="5"
+                                        HorizontalAlignment="Stretch"
+                                        CornerRadius="10">
+                                        <Border.Style>
+                                            <Style TargetType="Border">
+                                                <Setter Property="Background" Value="{StaticResource SpeechBubbleBackgroundBrush}" />
+                                                <Setter Property="HorizontalAlignment" Value="Left" />
+                                                <Setter Property="Margin" Value="0,0,60,0" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Role}" Value="User">
+                                                        <Setter Property="Background" Value="{StaticResource MiddleBackgroundBrush}" />
+                                                        <Setter Property="Margin" Value="60,0,0,0" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Border.Style>
+
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Text="{Binding DisplayName, StringFormat={}{0}:}" />
+                                            <emojiWpf:TextBlock
+                                                x:Name="UserTextBlock"
+                                                Grid.Row="1"
+                                                Padding="8"
+                                                FontSize="{StaticResource CommonFontSize}"
+                                                Foreground="{StaticResource CommonForegroundBrush}"
+                                                Text="{Binding Content}"
+                                                TextWrapping="Wrap"
+                                                Visibility="Collapsed" />
+
+                                            <emojiWpf:RichTextBox
+                                                x:Name="MyRichText"
+                                                Grid.Row="1"
+                                                Padding="8"
+                                                utils:RichTextBoxHelper.DocumentBinding="{Binding DisplayDocument}"
+                                                Background="Transparent"
+                                                BorderThickness="0"
+                                                FontSize="{StaticResource CommonFontSize}"
+                                                Foreground="{StaticResource CommonForegroundBrush}"
+                                                IsReadOnly="True"
+                                                Visibility="Visible">
+                                                <emojiWpf:RichTextBox.Resources>
+
+                                                    <Style TargetType="{x:Type FlowDocument}">
+                                                        <Setter Property="FontSize" Value="{StaticResource CommonFontSize}" />
+                                                    </Style>
+
+                                                    <Style TargetType="{x:Type Table}">
+                                                        <Setter Property="Background" Value="#2D2D2D" />
+                                                    </Style>
+                                                    <Style TargetType="{x:Type TableCell}">
+                                                        <Setter Property="Background" Value="#2D2D2D" />
+                                                    </Style>
+
+                                                    <Style TargetType="{x:Type Run}" />
+
+                                                    <Style TargetType="{x:Type Paragraph}">
+                                                        <Setter Property="Margin" Value="0,12,0,12" />
+                                                    </Style>
+
+                                                    <Style TargetType="{x:Type List}">
+                                                        <Setter Property="Margin" Value="20,20,0,20" />
+                                                        <Setter Property="Padding" Value="20,0,0,0" />
+                                                    </Style>
+
+                                                    <Style TargetType="{x:Type ListItem}">
+                                                        <Setter Property="Margin" Value="0,4,0,4" />
+                                                    </Style>
+
+                                                    <Style TargetType="{x:Type Span}" />
+                                                    <Style TargetType="{x:Type Section}" />
+                                                    <Style TargetType="{x:Type InlineUIContainer}" />
+                                                    <Style TargetType="{x:Type BlockUIContainer}" />
+                                                    <Style TargetType="{x:Type Border}" />
+                                                </emojiWpf:RichTextBox.Resources>
+                                            </emojiWpf:RichTextBox>
+
+                                            <StackPanel Grid.Row="2" HorizontalAlignment="Right">
+                                                <TextBlock
+                                                    Margin="0,0,0,5"
+                                                    HorizontalAlignment="Right"
+                                                    Text="{Binding Timestamp, StringFormat=yyyy/mm/dd HH:MM}" />
+
+                                                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                                                    <Button
+                                                        Width="40"
+                                                        Height="40"
+                                                        Command="{Binding CopyToClipboardAsyncCommand}">
+                                                        <Button.Style>
+                                                            <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
+                                                                <Setter Property="Content">
+                                                                    <Setter.Value>
+                                                                        <icon:PackIconMaterial Kind="Clipboard" />
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding NowCopy}" Value="True">
+                                                                        <Setter Property="Content">
+                                                                            <Setter.Value>
+                                                                                <icon:PackIconMaterial Kind="CheckBold" />
+                                                                            </Setter.Value>
+                                                                        </Setter>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+
+                                <DataTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Role}" Value="User">
+                                        <Setter TargetName="MyRichText" Property="Visibility" Value="Collapsed" />
+                                        <Setter TargetName="UserTextBlock" Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </DataTemplate.Triggers>
+
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Grid.Column="1">
+
+                    <StackPanel>
+                        <Border
+                            Margin="4"
+                            Background="{StaticResource MiddleBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource CommonCornerRadius}">
+                            <TextBox
+                                x:Name="PromptInputTextBox"
+                                Height="100"
+                                AcceptsReturn="True"
+                                AcceptsTab="True"
+                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                                TextWrapping="Wrap">
+                                <TextBox.InputBindings>
+                                    <KeyBinding
+                                        Key="Enter"
+                                        Command="{Binding SendRequestCommand}"
+                                        CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
+                                        Modifiers="Control" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                        </Border>
+
+                        <DockPanel Margin="8,4">
+                            <TextBlock Text="Context Length: " />
+                            <TextBlock
+                                Width="30"
+                                FontWeight="Bold"
+                                Text="{Binding MessageLimit}"
+                                TextAlignment="Right" />
+
+                            <Slider
+                                Margin="10,0"
+                                IsSnapToTickEnabled="True"
+                                Maximum="50"
+                                Minimum="0"
+                                TickFrequency="1"
+                                Value="{Binding MessageLimit}" />
+                        </DockPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="3"
+                    Grid.Column="1"
+                    Margin="0,10,0,0">
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <!--  -->
+                        <!-- <Button -->
+                        <!-- Width="200" -->
+                        <!-- Padding="5" -->
+                        <!-- HorizontalAlignment="Right" -->
+                        <!-- Command="{Binding AddDummyTalkCommand}"> -->
+                        <!--     <TextBlock Foreground="Black" Text="Add Dummy" /> -->
+                        <!-- </Button> -->
+                        <!--  -->
+
+                        <controls:CustomButton
+                            Width="100"
+                            Padding="5"
+                            ButtonCommand="{Binding SendRequestCommand}"
+                            ToolTip="Send request (Ctrl + Enter)">
+                            <!-- 本来は IsRunning をトリガーにするのがベストだが、エラーが出ず、トリガーも反応しなかったため IsEnabled を監視している。 -->
+                            <!-- 厳密に検証していないが、おそらく SendRequestCommand を都度 new しているのが原因の可能性がある。 -->
+                            <controls:CustomButton.ButtonContent>
+                                <Grid>
                                     <StackPanel Orientation="Horizontal">
-                                        <TextBlock
-                                            FontSize="{StaticResource CommonFontSize}"
-                                            Foreground="{StaticResource CommonForegroundBrush}"
-                                            Text="📄 " />
-                                        <TextBlock
-                                            FontSize="{StaticResource CommonFontSize}"
-                                            Foreground="{StaticResource CommonForegroundBrush}"
-                                            Text="{Binding FileName}" />
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <icon:PackIconMaterial Kind="Send" />
                                     </StackPanel>
-                                </DataTemplate>
-                            </ListBox.ItemTemplate>
-                        </ListBox>
-                    </Border>
-                </DockPanel>
 
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <icon:PackIconMaterial Kind="Reload" Spin="True" />
+                                    </StackPanel>
+                                </Grid>
+                            </controls:CustomButton.ButtonContent>
+                        </controls:CustomButton>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Grid.Column="2"
+                    Visibility="{Binding ElementName=SidebarToggle, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock Margin="0,0,0,5" Text="System Prompt Here..." />
+
+                            <controls:CustomButton
+                                Width="40"
+                                Height="{StaticResource ButtonHeight}"
+                                Margin="5,0"
+                                HorizontalAlignment="Right"
+                                ButtonCommand="{Binding BrowseHistoryCommand}"
+                                ButtonCommandParameter="1"
+                                DockPanel.Dock="Right">
+                                <controls:CustomButton.ButtonContent>
+                                    <icon:PackIconMaterial Kind="ArrowRight" />
+                                </controls:CustomButton.ButtonContent>
+                            </controls:CustomButton>
+
+                            <controls:CustomButton
+                                Width="40"
+                                Height="{StaticResource ButtonHeight}"
+                                HorizontalAlignment="Right"
+                                ButtonCommand="{Binding BrowseHistoryCommand}"
+                                ButtonCommandParameter="-1"
+                                DockPanel.Dock="Right">
+                                <controls:CustomButton.ButtonContent>
+                                    <icon:PackIconMaterial Kind="ArrowLeft" />
+                                </controls:CustomButton.ButtonContent>
+                            </controls:CustomButton>
+                        </DockPanel>
+
+                        <Border
+                            Grid.Row="1"
+                            Background="{StaticResource MiddleBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource CommonCornerRadius}">
+
+                            <TextBox
+                                AcceptsReturn="True"
+                                Text="{Binding CurrentSystemPrompt.PromptText, UpdateSourceTrigger=PropertyChanged}"
+                                TextWrapping="Wrap" />
+                        </Border>
+
+                        <DockPanel Grid.Row="2" Margin="0,15,0,0">
+                            <TextBlock
+                                Margin="0,0,0,5"
+                                DockPanel.Dock="Top"
+                                Text="Attached files Here..." />
+                            <Border
+                                Height="150"
+                                AllowDrop="True"
+                                Background="{StaticResource MiddleBackgroundBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="{StaticResource CommonCornerRadius}">
+
+                                <ListBox
+                                    Background="Transparent"
+                                    BorderThickness="0"
+                                    ItemsSource="{Binding AttachedFiles}"
+                                    SelectionMode="Extended">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors:DropFilesBehavior />
+                                        <behaviors:DeleteListItemBehavior />
+                                    </b:Interaction.Behaviors>
+
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock
+                                                    FontSize="{StaticResource CommonFontSize}"
+                                                    Foreground="{StaticResource CommonForegroundBrush}"
+                                                    Text="📄 " />
+                                                <TextBlock
+                                                    FontSize="{StaticResource CommonFontSize}"
+                                                    Foreground="{StaticResource CommonForegroundBrush}"
+                                                    Text="{Binding FileName}" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                        </DockPanel>
+
+                    </Grid>
+                </Border>
+
+                <Border
+                    Grid.Row="0"
+                    Grid.RowSpan="4"
+                    Grid.Column="3"
+                    Width="40">
+                    <StackPanel>
+                        <ToggleButton
+                            x:Name="SidebarToggle"
+                            Height="35"
+                            Margin="4,0,0,0"
+                            IsChecked="True"
+                            ToolTip="Edit System Prompt">
+                            <ToggleButton.Content>
+                                <icon:PackIconMaterial Foreground="Black" Kind="ConsoleLine" />
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                    </StackPanel>
+                </Border>
             </Grid>
-        </Border>
-
-        <Border
-            Grid.Row="0"
-            Grid.RowSpan="4"
-            Grid.Column="3"
-            Width="40">
-            <StackPanel>
-                <ToggleButton
-                    x:Name="SidebarToggle"
-                    Height="35"
-                    Margin="4,0,0,0"
-                    IsChecked="True"
-                    ToolTip="Edit System Prompt">
-                    <ToggleButton.Content>
-                        <icon:PackIconMaterial Foreground="Black" Kind="ConsoleLine" />
-                    </ToggleButton.Content>
-                </ToggleButton>
-            </StackPanel>
-        </Border>
-
-    </Grid>
-
+        </TabItem>
+        <TabItem Header="Ai model entry" />
+    </TabControl>
 </Window>
