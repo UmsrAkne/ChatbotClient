@@ -45,6 +45,7 @@ public partial class App
         }
 
         containerRegistry.Register<ITalkRepository, TalkRepository>();
+        containerRegistry.Register<IAiModelRepository, AiModelRepository>();
         containerRegistry.Register<SessionListBoxViewModel>();
     }
 

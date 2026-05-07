@@ -57,6 +57,12 @@ namespace ChatbotClient.Data
                     .HasForeignKey(e => e.SystemPromptGuid)
                     .HasPrincipalKey(s => s.Guid);
             });
+
+            modelBuilder.Entity<AiModel>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ModelName).IsRequired();
+            });
         }
     }
 }
