@@ -21,6 +21,7 @@ public class MainWindowViewModel : BindableBase
     private readonly AppVersionInfo appVersionInfo = new ();
     private readonly RequestDispatcher requestDispatcher = new ();
     private readonly ITalkRepository talkRepository;
+    private AiModelEntryViewModel aiModelEntryViewModel;
     private string inputText;
     private string responseText;
     private AiModelType currentModel;
@@ -31,7 +32,8 @@ public class MainWindowViewModel : BindableBase
 
     public MainWindowViewModel(
         SessionListBoxViewModel sessionListBoxViewModel,
-        ITalkRepository talkRepository)
+        ITalkRepository talkRepository,
+        AiModelEntryViewModel aiModelEntryViewModel)
     {
         AvailableModels = new ObservableCollection<AiModelType>()
         {
@@ -44,6 +46,7 @@ public class MainWindowViewModel : BindableBase
 
         CurrentModel = AvailableModels.First();
         this.talkRepository = talkRepository;
+        this.aiModelEntryViewModel = aiModelEntryViewModel;
         SessionListBoxViewModel = sessionListBoxViewModel;
 
         _ = InitializeAsync();
@@ -85,6 +88,12 @@ public class MainWindowViewModel : BindableBase
     }
 
     public SessionListBoxViewModel SessionListBoxViewModel { get; set; }
+
+    public AiModelEntryViewModel AiModelEntryViewModel
+    {
+        get => aiModelEntryViewModel;
+        set => SetProperty(ref aiModelEntryViewModel, value);
+    }
 
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
@@ -197,8 +206,6 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
-
-    public AiModelEntryViewModel AiModelEntryViewModel { get; } = new ();
 
     public bool TalkListScrollEnabled
     {
