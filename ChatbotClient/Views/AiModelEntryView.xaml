@@ -5,16 +5,52 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:ChatbotClient.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:ChatbotClient.Models"
     xmlns:viewModels="clr-namespace:ChatbotClient.ViewModels"
     d:DataContext="{d:DesignInstance viewModels:AiModelEntryViewModel}"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
-    <Grid>
+    <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition />
-            <RowDefinition />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <ListBox
+            Grid.Row="0"
+            Margin="0,0,0,20"
+            ItemsSource="{Binding AiModels}">
+            <ListBox.ItemTemplate>
+                <DataTemplate DataType="{x:Type models:AiModel}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="{StaticResource CommonFontSize}" Text="{Binding ModelName}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBox
+                Grid.Column="0"
+                Margin="0,0,10,0"
+                VerticalContentAlignment="Center"
+                Text="{Binding NewModelName, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding AddModelCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
+
+            <Button
+                Grid.Column="1"
+                Padding="20,5"
+                Command="{Binding AddModelCommand}"
+                Content="登録" />
+        </Grid>
     </Grid>
 </UserControl>
