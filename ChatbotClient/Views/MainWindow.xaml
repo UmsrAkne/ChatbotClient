@@ -516,6 +516,8 @@
                 </Border>
             </Grid>
         </TabItem>
-        <TabItem Header="Ai model entry" />
+        <TabItem DataContext="{Binding AiModelEntryViewModel}" Header="Ai model entry">
+            <views:AiModelEntryView />
+        </TabItem>
     </TabControl>
 </Window>

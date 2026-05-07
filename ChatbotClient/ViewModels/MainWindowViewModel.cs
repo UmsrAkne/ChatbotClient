@@ -9,6 +9,7 @@ using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
 using ChatbotClient.Utils;
+using ChatbotClient.Views;
 using CommunityToolkit.Mvvm.Input;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -196,6 +197,8 @@ public class MainWindowViewModel : BindableBase
     });
 
     public int MessageLimit { get => messageLimit; set => SetProperty(ref messageLimit, value); }
+
+    public AiModelEntryViewModel AiModelEntryViewModel { get; } = new ();
 
     public bool TalkListScrollEnabled
     {
