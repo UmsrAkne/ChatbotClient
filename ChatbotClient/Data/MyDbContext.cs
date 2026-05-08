@@ -14,6 +14,10 @@ namespace ChatbotClient.Data
 
         public DbSet<SystemPromptEntry> SystemPrompts { get; set; } = null!;
 
+        public DbSet<SessionFolder> SessionFolders { get; set; } = null!;
+
+        public DbSet<AiModel> AiModels { get; set; } = null!;
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -52,6 +56,12 @@ namespace ChatbotClient.Data
                     .WithMany()
                     .HasForeignKey(e => e.SystemPromptGuid)
                     .HasPrincipalKey(s => s.Guid);
+            });
+
+            modelBuilder.Entity<AiModel>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ModelName).IsRequired();
             });
         }
     }

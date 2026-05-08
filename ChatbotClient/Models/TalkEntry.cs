@@ -50,6 +50,8 @@ namespace ChatbotClient.Models
 
         public AiModelType AiModelType { get; set; } = AiModelType.None;
 
+        public Guid? AiModelId { get; set; }
+
         public Guid? SystemPromptGuid { get; set; }
 
         public int Index { get; set; }

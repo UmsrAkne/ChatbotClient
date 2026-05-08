@@ -9,6 +9,7 @@ using ChatbotClient.Core;
 using ChatbotClient.Data;
 using ChatbotClient.Models;
 using ChatbotClient.Utils;
+using ChatbotClient.Views;
 using CommunityToolkit.Mvvm.Input;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -20,9 +21,10 @@ public class MainWindowViewModel : BindableBase
     private readonly AppVersionInfo appVersionInfo = new ();
     private readonly RequestDispatcher requestDispatcher = new ();
     private readonly ITalkRepository talkRepository;
+    private AiModelEntryViewModel aiModelEntryViewModel;
     private string inputText;
     private string responseText;
-    private AiModelType currentModel;
+    private AiModel currentModel;
     private int messageLimit = 10;
     private SystemPromptEntry currentSystemPrompt;
     private int currentHistoryIndex;
@@ -30,19 +32,14 @@ public class MainWindowViewModel : BindableBase
 
     public MainWindowViewModel(
         SessionListBoxViewModel sessionListBoxViewModel,
-        ITalkRepository talkRepository)
+        ITalkRepository talkRepository,
+        AiModelEntryViewModel aiModelEntryViewModel)
     {
-        AvailableModels = new ObservableCollection<AiModelType>()
-        {
-            AiModelType.GeminiFlashLite,
-            AiModelType.GeminiFlash,
-            AiModelType.GemmaFree,
-            AiModelType.LlamaFree,
-            AiModelType.ChatGPT4o,
-        };
+        AvailableModels = new ObservableCollection<AiModel>(aiModelEntryViewModel.AiModels.ToList());
 
-        CurrentModel = AvailableModels.First();
+        CurrentModel = AvailableModels.FirstOrDefault();
         this.talkRepository = talkRepository;
+        this.aiModelEntryViewModel = aiModelEntryViewModel;
         SessionListBoxViewModel = sessionListBoxViewModel;
 
         _ = InitializeAsync();
@@ -63,9 +60,9 @@ public class MainWindowViewModel : BindableBase
 
     public string ResponseText { get => responseText; set => SetProperty(ref responseText, value); }
 
-    public ObservableCollection<AiModelType> AvailableModels { get; init; }
+    public ObservableCollection<AiModel> AvailableModels { get; init; }
 
-    public AiModelType CurrentModel { get => currentModel; set => SetProperty(ref currentModel, value); }
+    public AiModel CurrentModel { get => currentModel; set => SetProperty(ref currentModel, value); }
 
     public SystemPromptEntry CurrentSystemPrompt
     {
@@ -84,6 +81,12 @@ public class MainWindowViewModel : BindableBase
     }
 
     public SessionListBoxViewModel SessionListBoxViewModel { get; set; }
+
+    public AiModelEntryViewModel AiModelEntryViewModel
+    {
+        get => aiModelEntryViewModel;
+        set => SetProperty(ref aiModelEntryViewModel, value);
+    }
 
     public AsyncRelayCommand LoadSessionAsyncCommand => new (async () =>
     {
@@ -119,9 +122,11 @@ public class MainWindowViewModel : BindableBase
         MapsToHistoryIndex(d);
     });
 
-    public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
+    public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Logger.Log("コマンドが実行されました");
+
+        var text = InputText;
 
         // 1. まず自分の発言を UI (Talks) に追加
         var userEntry = new TalkEntry(text, true);
@@ -141,11 +146,10 @@ public class MainWindowViewModel : BindableBase
 
         try
         {
-            var modelName = OpenRouterModels.GetModelId(CurrentModel);
             var request = new TalkRequest
             {
                 Message = text,
-                ModelName = modelName,
+                ModelName = CurrentModel.ModelName,
                 SystemPrompt = sp.PromptText,
                 History = Talks.ToList(),
                 MessageLimit = MessageLimit,
@@ -154,7 +158,8 @@ public class MainWindowViewModel : BindableBase
             // 3. 通信開始
             var result = await requestDispatcher.SendRequest(request);
             result.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(result.Content);
-            result.AiModelType = CurrentModel;
+            result.AiModelType = AiModelType.None;
+            result.AiModelId = CurrentModel.Id;
 
             // 4. AIの返答を UI と DB に登録
             await RegisterChat(result);
