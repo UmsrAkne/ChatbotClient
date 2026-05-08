@@ -149,7 +149,7 @@ public class MainWindowViewModel : BindableBase
             var request = new TalkRequest
             {
                 Message = text,
-                ModelName = CurrentModel.ToString(),
+                ModelName = CurrentModel.ModelName,
                 SystemPrompt = sp.PromptText,
                 History = Talks.ToList(),
                 MessageLimit = MessageLimit,
@@ -159,7 +159,7 @@ public class MainWindowViewModel : BindableBase
             var result = await requestDispatcher.SendRequest(request);
             result.DisplayDocument = RichTextBoxHelper.ConvertMarkdown(result.Content);
             result.AiModelType = AiModelType.None;
-            result.AiModel = CurrentModel;
+            result.AiModelId = CurrentModel.Id;
 
             // 4. AIの返答を UI と DB に登録
             await RegisterChat(result);

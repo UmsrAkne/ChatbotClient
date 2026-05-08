@@ -52,9 +52,6 @@ namespace ChatbotClient.Models
 
         public Guid? AiModelId { get; set; }
 
-        [ForeignKey(nameof(AiModelId))]
-        public AiModel AiModel { get; set; }
-
         public Guid? SystemPromptGuid { get; set; }
 
         public int Index { get; set; }
