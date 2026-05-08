@@ -50,7 +50,7 @@ namespace ChatbotClient.Models
 
         public AiModelType AiModelType { get; set; } = AiModelType.None;
 
-        public Guid AiModelId { get; set; }
+        public Guid? AiModelId { get; set; }
 
         [ForeignKey(nameof(AiModelId))]
         public AiModel AiModel { get; set; }
