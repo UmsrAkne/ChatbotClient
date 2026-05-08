@@ -129,9 +129,11 @@ public class MainWindowViewModel : BindableBase
         MapsToHistoryIndex(d);
     });
 
-    public AsyncRelayCommand<string> SendRequestCommand => new (async text =>
+    public AsyncRelayCommand SendRequestCommand => new (async () =>
     {
         Logger.Log("コマンドが実行されました");
+
+        var text = InputText;
 
         // 1. まず自分の発言を UI (Talks) に追加
         var userEntry = new TalkEntry(text, true);

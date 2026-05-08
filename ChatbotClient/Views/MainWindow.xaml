@@ -308,13 +308,12 @@
                                 Height="100"
                                 AcceptsReturn="True"
                                 AcceptsTab="True"
-                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged, Delay=1000}"
+                                Text="{Binding InputText, UpdateSourceTrigger=PropertyChanged}"
                                 TextWrapping="Wrap">
                                 <TextBox.InputBindings>
                                     <KeyBinding
                                         Key="Enter"
                                         Command="{Binding SendRequestCommand}"
-                                        CommandParameter="{Binding ElementName=PromptInputTextBox, Path=Text}"
                                         Modifiers="Control" />
                                 </TextBox.InputBindings>
                             </TextBox>
