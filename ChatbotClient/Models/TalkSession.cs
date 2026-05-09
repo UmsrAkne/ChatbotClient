@@ -10,9 +10,7 @@ namespace ChatbotClient.Models
         private bool isEditing;
         private string title = string.Empty;
 
-        public int Id { get; set; }
-
-        public Guid Guid { get; set; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         public string Title { get => title; set => SetProperty(ref title, value); }
 

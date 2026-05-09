@@ -40,7 +40,7 @@ namespace ChatbotClient.Data
                 entity.HasMany(e => e.Entries)
                       .WithOne(e => e.TalkSession!)
                       .HasForeignKey(e => e.TalkSessionGuid)
-                      .HasPrincipalKey(e => e.Guid)
+                      .HasPrincipalKey(e => e.Id)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 

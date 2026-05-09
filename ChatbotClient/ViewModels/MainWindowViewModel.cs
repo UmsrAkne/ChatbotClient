@@ -95,7 +95,7 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Guid);
+        var ts = await talkRepository.GetEntriesBySessionIdAsync(SessionListBoxViewModel.CurrentSession.Id);
         var ordered = ts.OrderBy(t => t.Timestamp.ToLocalTime()).ToList();
         await Application.Current.Dispatcher.InvokeAsync(async () =>
         {
@@ -139,7 +139,7 @@ public class MainWindowViewModel : BindableBase
         userEntry.SystemPromptGuid = sp.Guid;
 
         Talks.Add(userEntry);
-        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Guid, userEntry);
+        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Id, userEntry);
 
         // 2. 入力欄をクリア（連打防止）
         InputText = string.Empty;
@@ -236,7 +236,7 @@ public class MainWindowViewModel : BindableBase
             return;
         }
 
-        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Guid, talkEntry);
+        await talkRepository.AddEntryAsync(SessionListBoxViewModel.CurrentSession.Id, talkEntry);
         Talks.Add(talkEntry);
     }
 
@@ -282,16 +282,16 @@ public class MainWindowViewModel : BindableBase
     /// セッションのリストをリロードします。引数を入力した場合、該当IDのセッションを CurrentSession に代入します。
     /// </summary>
     /// <param name="selectionId">リロード直後に選択するセッションIDを指定します。</param>
-    private async Task ReloadSessionsAsync(int selectionId = -1)
+    private async Task ReloadSessionsAsync(Guid? selectionId = null)
     {
         var ss = await talkRepository.GetSessionsAsync();
         SessionListBoxViewModel.Sessions.Clear();
         SessionListBoxViewModel.Sessions.AddRange(ss.OrderBy(s => s.CreatedAt));
         Logger.Log("Reload Sessions");
 
-        if (selectionId >= 0)
+        if (selectionId.HasValue)
         {
-            SessionListBoxViewModel.CurrentSession = SessionListBoxViewModel.Sessions.FirstOrDefault(s => s.Id == selectionId);
+            SessionListBoxViewModel.CurrentSession = SessionListBoxViewModel.Sessions.FirstOrDefault(s => s.Id == selectionId.Value);
         }
     }
 
