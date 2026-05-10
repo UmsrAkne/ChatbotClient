@@ -35,7 +35,7 @@ public class MainWindowViewModel : BindableBase
         ITalkRepository talkRepository,
         AiModelEntryViewModel aiModelEntryViewModel)
     {
-        AvailableModels = new ObservableCollection<AiModel>(aiModelEntryViewModel.AiModels.ToList());
+        AvailableModels = aiModelEntryViewModel.AiModels;
 
         CurrentModel = AvailableModels.FirstOrDefault();
         this.talkRepository = talkRepository;
