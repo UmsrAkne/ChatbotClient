@@ -34,7 +34,7 @@ namespace ChatbotClient.ViewModels
         public DelegateCommand<TalkSession> ConfirmRenameCommand => new ((target) =>
         {
             target.IsEditing = false;
-            talkRepository.UpdateSessionTitleAsync(target.Guid, target.Title);
+            talkRepository.UpdateSessionTitleAsync(target.Id, target.Title);
         });
     }
 }

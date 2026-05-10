@@ -28,11 +28,11 @@ namespace ChatbotClient.Data
                 .ToListAsync();
         }
 
-        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionGuid)
+        public Task<List<TalkEntry>> GetEntriesBySessionIdAsync(Guid sessionId)
         {
             return db.TalkEntries
                 .AsNoTracking()
-                .Where(e => e.TalkSessionGuid == sessionGuid)
+                .Where(e => e.TalkSessionGuid == sessionId)
                 .Include(e => e.SystemPrompt)
                 .OrderBy(e => e.Index)
                 .ThenBy(e => e.Timestamp)
@@ -47,14 +47,14 @@ namespace ChatbotClient.Data
             return session;
         }
 
-        public async Task<TalkEntry> AddEntryAsync(Guid sessionGuid, TalkEntry entry)
+        public async Task<TalkEntry> AddEntryAsync(Guid sessionId, TalkEntry entry)
         {
             // ensure entry is linked to the specified session
-            entry.TalkSessionGuid = sessionGuid;
+            entry.TalkSessionGuid = sessionId;
 
             // Determine the next Index within this TalkSession to preserve order
             var currentMaxIndex = await db.TalkEntries
-                .Where(e => e.TalkSessionGuid == sessionGuid)
+                .Where(e => e.TalkSessionGuid == sessionId)
                 .Select(e => (int?)e.Index)
                 .MaxAsync()
                 .ConfigureAwait(false);
@@ -66,9 +66,9 @@ namespace ChatbotClient.Data
             return entry;
         }
 
-        public async Task UpdateSessionTitleAsync(Guid sessionGuid, string newTitle)
+        public async Task UpdateSessionTitleAsync(Guid sessionId, string newTitle)
         {
-            var session = await db.TalkSessions.FirstOrDefaultAsync(s => s.Guid == sessionGuid).ConfigureAwait(false);
+            var session = await db.TalkSessions.FirstOrDefaultAsync(s => s.Id == sessionId).ConfigureAwait(false);
             if (session == null)
             {
                 return;
@@ -147,7 +147,7 @@ namespace ChatbotClient.Data
         }
 
         // Delete
-        public async Task DeleteSessionAsync(int sessionId)
+        public async Task DeleteSessionAsync(Guid sessionId)
         {
             var session = await db.TalkSessions.FindAsync(sessionId).ConfigureAwait(false);
             if (session == null)

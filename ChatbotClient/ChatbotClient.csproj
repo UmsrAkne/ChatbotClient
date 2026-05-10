@@ -16,6 +16,10 @@
         <PackageReference Include="MaterialDesignThemes" Version="5.2.1" />
         <PackageReference Include="MaterialDesignThemes.MahApps" Version="5.2.1" />
         <PackageReference Include="MdXaml" Version="2.0.0-pre202603081301" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.20">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="OpenAI" Version="2.9.1" />
         <PackageReference Include="Prism.DryIoc" Version="8.1.97" />
         <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">

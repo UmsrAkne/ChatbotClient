@@ -4,6 +4,7 @@ using ChatbotClient.Data;
 using ChatbotClient.Utils;
 using ChatbotClient.ViewModels;
 using ChatbotClient.Views;
+using Microsoft.EntityFrameworkCore;
 using Prism.Ioc;
 
 namespace ChatbotClient;
@@ -41,7 +42,7 @@ public partial class App
         // OnInitializedよりも先に実行されるため、後続のリポジトリ作成でコケない
         using (var db = new MyDbContext())
         {
-            db.Database.EnsureCreated();
+            db.Database.Migrate();
         }
 
         containerRegistry.Register<ITalkRepository, TalkRepository>();
