@@ -31,7 +31,7 @@ namespace ChatbotClient.ViewModels
                 return;
             }
 
-            var newModel = new AiModel { ModelName = NewModelName, };
+            var newModel = new AiModel { ModelName = NewModelName.Trim(), };
             await aiModelRepository.AddAsync(newModel);
             AiModels.Add(newModel);
             NewModelName = string.Empty;
